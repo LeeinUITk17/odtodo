@@ -1,0 +1,6 @@
+<odoo>
+    <record id="group_todo_user" model="res.groups">
+        <field name="name">To-Do User</field>
+        <field name="category_id" ref="base.module_category_user"/>
+    </record>
+</odoo>
