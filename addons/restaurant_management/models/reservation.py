@@ -1,11 +1,11 @@
 from odoo import models, fields
 
 class Reservation(models.Model):
-    _name = 'restaurant.reservation'
+    _name = 'restaurant_management.reservation'
     _description = 'Table Reservation'
 
-    customer_id = fields.Many2one('restaurant.customer', string="Customer", required=True)
-    branch_id = fields.Many2one('restaurant.branch', string="Branch", required=True)
+    customer_id = fields.Many2one('restaurant_management.customer', string="Customer", required=True)
+    branch_id = fields.Many2one('restaurant_management.branch', string="Branch", required=True)
     date_time = fields.Datetime(string="Reservation Date & Time", required=True)
     status = fields.Selection([
         ('pending', 'Pending'),

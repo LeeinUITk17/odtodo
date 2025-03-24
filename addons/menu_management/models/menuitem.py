@@ -1,17 +1,14 @@
-from sqlalchemy import Column, String, Float, ForeignKey
-from sqlalchemy.orm import relationship
-from database import Base
+from odoo import models, fields
 
-class MenuItem(Base):
-    __tablename__ = "menu_item"
+class MenuItem(models.Model):
+    _name = 'menu_management.menuitem'
+    _description = 'Menu Item'
 
-    id = Column(String, primary_key=True, index=True)
-    name = Column(String, nullable=False)
-    description = Column(String, nullable=True)
-    price = Column(Float, nullable=False)
-    category_id = Column(String, ForeignKey("category.id"), nullable=False)
-    branch_id = Column(String, ForeignKey("branch.id"), nullable=False)
+    name = fields.Char(string="Item Name", required=True)
+    description = fields.Text(string="Description")
+    price = fields.Float(string="Price", required=True)
+    
+    category_id = fields.Many2one('menu_management.category', string="Category", required=True, ondelete='cascade')
+    branch_id = fields.Many2one('restaurant_management.branch', string="Branch", required=True, ondelete='cascade')
 
-    category = relationship("Category", back_populates="menu_items")
-    branch = relationship("Branch", back_populates="menu_items")
-    order_items = relationship("OrderItem", back_populates="menu_item")
+    order_item_ids = fields.One2many('order_management.orderitem', 'menu_item_id', string="Order Items")

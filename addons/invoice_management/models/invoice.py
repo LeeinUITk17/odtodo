@@ -1,10 +1,10 @@
 from odoo import models, fields, api
 
 class Invoice(models.Model):
-    _name = 'invoice.management'
+    _name = 'invoice_management.invoice'
     _description = 'Invoice Management'
 
-    order_id = fields.Many2one('order.management', string="Order", required=True, ondelete="cascade")
+    order_id = fields.Many2one('order_management.order', string="Order", required=True, ondelete="cascade")
     total_price = fields.Float(string="Total Price", related='order_id.total_price', store=True)
     payment_method = fields.Selection([
         ('cash', 'Cash'),

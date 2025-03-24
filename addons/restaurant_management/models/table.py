@@ -1,7 +1,7 @@
 from odoo import models, fields
 
 class Table(models.Model):
-    _name = 'restaurant.table'
+    _name = 'restaurant_management.table'
     _description = 'Restaurant Table'
 
     number = fields.Char(string="Table Number", required=True, unique=True)
@@ -11,4 +11,4 @@ class Table(models.Model):
         ('occupied', 'Occupied'),
         ('reserved', 'Reserved'),
     ], string="Status", default='available')
-    order_ids = fields.One2many('restaurant.order', 'table_id', string="Orders")
+    order_ids = fields.One2many('order_management.order', 'table_id', string="Orders")

@@ -1,14 +1,10 @@
-from sqlalchemy import Column, String, ForeignKey
-from sqlalchemy.orm import relationship
-from database import Base
+from odoo import models, fields
 
-class Category(Base):
-    __tablename__ = "category"
+class Category(models.Model):
+    _name = 'menu_management.category'
+    _description = 'Menu Category'
 
-    id = Column(String, primary_key=True, index=True)
-    name = Column(String, nullable=False)
-    parent_id = Column(String, ForeignKey("category.id"), nullable=True)
-
-    parent = relationship("Category", remote_side=[id], back_populates="subcategories")
-    subcategories = relationship("Category", back_populates="parent")
-    menu_items = relationship("MenuItem", back_populates="category")
+    name = fields.Char(string="Category Name", required=True)
+    parent_id = fields.Many2one('menu_management.category', string="Parent Category", ondelete='cascade')
+    subcategory_ids = fields.One2many('menu_management.category', 'parent_id', string="Subcategories")
+    menu_item_ids = fields.One2many('menu_management.menuitem', 'category_id', string="Menu Items")
