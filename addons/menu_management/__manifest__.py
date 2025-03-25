@@ -10,9 +10,8 @@
     """,
     'author': 'NexaLap',
     'category': 'Restaurant',
-    'depends': ['base'],  # Modules this depends on
+    'depends': ['base'],
     'data': [
-        # Add paths to data files like views, security, or menus if needed
     ],
     'installable': True,
     'application': True,

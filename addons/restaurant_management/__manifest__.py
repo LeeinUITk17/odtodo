@@ -10,7 +10,7 @@
     """,
     'author': 'NexaLap',
     'category': 'Restaurant',
-    'depends': ['base','menu_management','order_management'],  # Modules this depends on
+    'depends': ['base'],
     'data': [
     ],
     'installable': True,
