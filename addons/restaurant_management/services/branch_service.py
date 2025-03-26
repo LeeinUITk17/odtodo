@@ -1,7 +1,7 @@
 from odoo import api, models
 
 class BranchService(models.AbstractModel):
-    _name = 'restaurant_management.branch.service'
+    _name = 'restaurant_management.branch_service'
     _description = 'Branch Service'
 
     @api.model
@@ -9,21 +9,24 @@ class BranchService(models.AbstractModel):
         return self.env['restaurant_management.branch'].create(vals)
 
     @api.model
-    def get_branch(self, branch_id):
-        return self.env['restaurant_management.branch'].browse(branch_id).read()
+    def get_branch(self, uuid):
+        branch = self.env['restaurant_management.branch'].search([('uuid', '=', uuid)], limit=1)
+        if branch:
+            return branch.read()
+        return False
 
     @api.model
-    def update_branch(self, branch_id, vals):
-        branch = self.env['restaurant_management.branch'].browse(branch_id)
-        if branch.exists():
+    def update_branch(self, uuid, vals):
+        branch = self.env['restaurant_management.branch'].search([('uuid', '=', uuid)], limit=1)
+        if branch:
             branch.write(vals)
             return branch.read()
         return False
 
     @api.model
-    def delete_branch(self, branch_id):
-        branch = self.env['restaurant_management.branch'].browse(branch_id)
-        if branch.exists():
+    def delete_branch(self, uuid):
+        branch = self.env['restaurant_management.branch'].search([('uuid', '=', uuid)], limit=1)
+        if branch:
             branch.unlink()
             return True
         return False

@@ -9,17 +9,24 @@ class TableService(models.AbstractModel):
         return self.env['restaurant_management.table'].create(vals)
 
     @api.model
-    def read_table(self, table_id):
-        return self.env['restaurant_management.table'].browse(table_id).read()
+    def read_table(self, uuid):
+        table = self.env['restaurant_management.table'].search([('uuid', '=', uuid)], limit=1)
+        if table:
+            return table.read()
+        return False
 
     @api.model
-    def update_table(self, table_id, vals):
-        table = self.env['restaurant_management.table'].browse(table_id)
-        table.write(vals)
-        return table
+    def update_table(self, uuid, vals):
+        table = self.env['restaurant_management.table'].search([('uuid', '=', uuid)], limit=1)
+        if table:
+            table.write(vals)
+            return table.read()
+        return False
 
     @api.model
-    def delete_table(self, table_id):
-        table = self.env['restaurant_management.table'].browse(table_id)
-        table.unlink()
-        return True
+    def delete_table(self, uuid):
+        table = self.env['restaurant_management.table'].search([('uuid', '=', uuid)], limit=1)
+        if table:
+            table.unlink()
+            return True
+        return False

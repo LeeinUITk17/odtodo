@@ -8,25 +8,26 @@ class ReservationController(http.Controller):
         reservations = request.env['restaurant_management.reservation'].search([])
         return reservations.read()
 
-    @http.route('/reservations/<int:reservation_id>', type='json', auth='user')
-    def get_reservation(self, reservation_id):
-        reservation = request.env['restaurant_management.reservation'].browse(reservation_id)
-        return reservation.read()
+    @http.route('/reservations/<string:uuid>', type='json', auth='user')
+    def get_reservation(self, uuid):
+        reservation_service = request.env['restaurant_management.reservation_service']
+        reservation = reservation_service.read_reservation(uuid)
+        return {'status': 'success', 'data': reservation} if reservation else {'status': 'error', 'message': 'Reservation not found'}
 
     @http.route('/reservations', type='json', auth='user', methods=['POST'])
     def create_reservation(self, **kwargs):
         reservation_service = request.env['restaurant_management.reservation_service']
         reservation = reservation_service.create_reservation(kwargs)
-        return reservation.read()
+        return {'status': 'success', 'data': reservation.read()} if reservation else {'status': 'error', 'message': 'Failed to create reservation'}
 
-    @http.route('/reservations/<int:reservation_id>', type='json', auth='user', methods=['PUT'])
-    def update_reservation(self, reservation_id, **kwargs):
+    @http.route('/reservations/<string:uuid>', type='json', auth='user', methods=['PUT'])
+    def update_reservation(self, uuid, **kwargs):
         reservation_service = request.env['restaurant_management.reservation_service']
-        reservation = reservation_service.update_reservation(reservation_id, kwargs)
-        return reservation.read()
+        reservation = reservation_service.update_reservation(uuid, kwargs)
+        return {'status': 'success', 'data': reservation} if reservation else {'status': 'error', 'message': 'Reservation not found or update failed'}
 
-    @http.route('/reservations/<int:reservation_id>', type='json', auth='user', methods=['DELETE'])
-    def delete_reservation(self, reservation_id):
+    @http.route('/reservations/<string:uuid>', type='json', auth='user', methods=['DELETE'])
+    def delete_reservation(self, uuid):
         reservation_service = request.env['restaurant_management.reservation_service']
-        reservation_service.delete_reservation(reservation_id)
-        return {'status': 'success'}
+        success = reservation_service.delete_reservation(uuid)
+        return {'status': 'success'} if success else {'status': 'error', 'message': 'Reservation not found or delete failed'}

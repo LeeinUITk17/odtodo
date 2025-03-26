@@ -9,17 +9,24 @@ class CustomerService(models.AbstractModel):
         return self.env['restaurant_management.customer'].create(vals)
 
     @api.model
-    def read_customer(self, customer_id):
-        return self.env['restaurant_management.customer'].browse(customer_id).read()
+    def read_customer(self, uuid):
+        customer = self.env['restaurant_management.customer'].search([('uuid', '=', uuid)], limit=1)
+        if customer:
+            return customer.read()
+        return False
 
     @api.model
-    def update_customer(self, customer_id, vals):
-        customer = self.env['restaurant_management.customer'].browse(customer_id)
-        customer.write(vals)
-        return customer
+    def update_customer(self, uuid, vals):
+        customer = self.env['restaurant_management.customer'].search([('uuid', '=', uuid)], limit=1)
+        if customer:
+            customer.write(vals)
+            return customer.read()
+        return False
 
     @api.model
-    def delete_customer(self, customer_id):
-        customer = self.env['restaurant_management.customer'].browse(customer_id)
-        customer.unlink()
-        return True
+    def delete_customer(self, uuid):
+        customer = self.env['restaurant_management.customer'].search([('uuid', '=', uuid)], limit=1)
+        if customer:
+            customer.unlink()
+            return True
+        return False

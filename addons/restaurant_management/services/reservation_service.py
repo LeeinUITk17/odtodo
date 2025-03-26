@@ -9,17 +9,24 @@ class ReservationService(models.AbstractModel):
         return self.env['restaurant_management.reservation'].create(vals)
 
     @api.model
-    def read_reservation(self, reservation_id):
-        return self.env['restaurant_management.reservation'].browse(reservation_id).read()
+    def read_reservation(self, uuid):
+        reservation = self.env['restaurant_management.reservation'].search([('uuid', '=', uuid)], limit=1)
+        if reservation:
+            return reservation.read()
+        return False
 
     @api.model
-    def update_reservation(self, reservation_id, vals):
-        reservation = self.env['restaurant_management.reservation'].browse(reservation_id)
-        reservation.write(vals)
-        return reservation
+    def update_reservation(self, uuid, vals):
+        reservation = self.env['restaurant_management.reservation'].search([('uuid', '=', uuid)], limit=1)
+        if reservation:
+            reservation.write(vals)
+            return reservation.read()
+        return False
 
     @api.model
-    def delete_reservation(self, reservation_id):
-        reservation = self.env['restaurant_management.reservation'].browse(reservation_id)
-        reservation.unlink()
-        return True
+    def delete_reservation(self, uuid):
+        reservation = self.env['restaurant_management.reservation'].search([('uuid', '=', uuid)], limit=1)
+        if reservation:
+            reservation.unlink()
+            return True
+        return False
