@@ -9,9 +9,11 @@
         - Customer database
     """,
     'author': 'NexaLap',
+    'website': 'https://www.odooclass.com', 
     'category': 'Restaurant',
-    'depends': ['base'],
+    'depends': ['base'],  # Ensure dependencies are correct
     'data': [
+        'security/ir.model.access.csv',
     ],
     'installable': True,
     'application': True,
