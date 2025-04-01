@@ -7,9 +7,11 @@
         including invoice creation, payment tracking, and integration with orders.
     """,
     'category': 'Restaurant',
+    'website': 'https://www.odooclass.com', 
     'author': 'NexaLap',
-    'depends': ['base'],
+    'depends': ['base','restaurant_management'],  # Ensure dependencies are correct
     'data': [
+        'security/ir.model.access.csv',
     ],
     'installable': True,
     'application': True,
