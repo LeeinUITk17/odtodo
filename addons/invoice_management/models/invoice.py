@@ -11,7 +11,7 @@ class Invoice(models.Model):
 
     # Dependencies: order_management, restaurant_management
     order_uuid = fields.Many2one("restaurant_management.order", string="Order", required=True, ondelete="restrict", index=True) # Changed ondelete to restrict for safety, added index
-    customer_uuid = fields.Many2one("restaurant_management.customer", string="Customer", ondelete="set null", index=True) # Added index
+    customer_uuid = fields.Many2one("restaurant_management.customer", string="Customer", ondelete="set null", index=True)
 
     # Consider making total_price computed if details drive the price
     total_price = fields.Float(string="Total Price", compute='_compute_total_amounts', store=True) # Changed to compute

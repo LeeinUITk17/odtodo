@@ -9,7 +9,7 @@
     'category': 'Restaurant',
     'website': 'https://www.odooclass.com', 
     'author': 'NexaLap',
-    'depends': ['base','restaurant_management'],  # Ensure dependencies are correct
+    'depends': ['base','restaurant_management','web'],  # Ensure dependencies are correct
     'data': [
         'security/ir.model.access.csv',
     ],
