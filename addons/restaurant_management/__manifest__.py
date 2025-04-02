@@ -11,7 +11,7 @@
     'author': 'NexaLap',
     'website': 'https://www.odooclass.com', 
     'category': 'Restaurant',
-    'depends': ['base'],  # Ensure dependencies are correct
+    'depends': ['base','invoice_management','web'],  # Ensure dependencies are correct
     'data': [
         'security/ir.model.access.csv',
     ],
