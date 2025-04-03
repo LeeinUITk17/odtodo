@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="view_menuitem_tree" model="ir.ui.view">
+            <field name="name">restaurant.management.menuitem.tree</field>
+            <field name="model">restaurant_management.menuitem</field>
+            <field name="arch" type="xml">
+                <tree string="Menu Items">
+                    <field name="name"/>
+                    <field name="category_uuid"/>
+                    <field name="branch_uuid"/>
+                    <field name="price"/>
+                    <field name="uuid" optional="hide"/>
+                    <field name="deleted_at" optional="show"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_menuitem_form" model="ir.ui.view">
+            <field name="name">restaurant.management.menuitem.form</field>
+            <field name="model">restaurant_management.menuitem</field>
+            <field name="arch" type="xml">
+                <form string="Menu Item">
+                     <sheet>
+                         <group>
+                             <group>
+                                 <field name="name"/>
+                                 <field name="category_uuid" options="{'no_create': True, 'no_open': True}"/>
+                                 <field name="branch_uuid" options="{'no_create': True, 'no_open': True}"/>
+                                 <field name="price"/>
+                             </group>
+                             <group>
+                                 <field name="image" widget="image" class="oe_avatar"/>
+                             </group>
+                         </group>
+                     </sheet>
+                 </form>
+             </field>
+         </record>
+         <record id="view_menuitem_search" model="ir.ui.view">
+             <field name="name">restaurant.management.menuitem.search</field>
+             <field name="model">restaurant_management.menuitem</field>
+             <field name="arch" type="xml">
+                 <search string="Search Menu Items">
+                     <field name="name"/>
+                     <field name="category_uuid"/>
+                     <field name="branch_uuid"/>
+                     <field name="uuid"/>
+                     <separator/>
+                     <filter string="Deleted" name="filter_deleted" domain="[('deleted_at', '!=', False)]"/>
+                     <separator/>
+                     <filter string="No Category" name="no_category" domain="[('category_uuid', '=', False)]"/>
+                     <group expand="0" string="Group By">
+                         <filter string="Category" name="group_by_category" context="{'group_by': 'category_uuid'}"/>
+                         <filter string="Branch" name="group_by_branch" context="{'group_by': 'branch_uuid'}"/>
+                     </group>
+                 </search>
+             </field>
+         </record>
+
+        <record id="action_menuitem" model="ir.actions.act_window">
+            <field name="name">Menu Items</field>
+            <field name="res_model">restaurant_management.menuitem</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="view_menuitem_search"/>
+             <field name="help" type="html">
+               <p class="o_view_nocontent_smiling_face">
+                 Add your first menu item!
+               </p><p>
+                 Define the dishes and drinks available in your restaurant branches.
+               </p>
+             </field>
+        </record>
+
+        <menuitem id="menu_menuitem"
+                  name="Menu Items"
+                  parent="menu_restaurant_config" 
+                  action="action_menuitem"
+                  sequence="40"/>
+
+    </data>
+</odoo>

@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="view_table_tree" model="ir.ui.view">
+            <field name="name">restaurant.management.table.tree</field>
+            <field name="model">restaurant_management.table</field>
+            <field name="arch" type="xml">
+                <tree string="Tables" decoration-success="status=='available'" decoration-warning="status=='reserved'" decoration-danger="status=='occupied'">
+                    <field name="name"/>
+                    <field name="branch_uuid"/>
+                    <field name="area"/>
+                    <field name="floor" optional="show"/>
+                    <field name="capacity"/>
+                    <field name="status"/>
+                    <field name="uuid" optional="hide"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_table_form" model="ir.ui.view">
+            <field name="name">restaurant.management.table.form</field>
+            <field name="model">restaurant_management.table</field>
+            <field name="arch" type="xml">
+                <form string="Table">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="name"/>
+                                <field name="branch_uuid" options="{'no_create': True, 'no_open': True}"/>
+                                <field name="capacity"/>
+                             </group>
+                            <group>
+                                <field name="area"/>
+                                <field name="floor"/>
+                                <field name="status"/>
+                           </group>
+                        </group>
+                         <group string="Technical Info" col="4">
+                             <field name="uuid" readonly="1"/>
+                             <field name="created_at" readonly="1"/>
+                             <field name="updated_at" readonly="1"/>
+                         </group>
+                        <notebook>
+                             <page string="Orders" name="orders">
+                                <field name="order_uuids" readonly="1">
+                                     <tree>
+                                        <field name="status"/>
+                                        <field name="total_price"/>
+                                        <field name="created_at"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_table_search" model="ir.ui.view">
+            <field name="name">restaurant.management.table.search</field>
+            <field name="model">restaurant_management.table</field>
+            <field name="arch" type="xml">
+                <search string="Search Tables">
+                    <field name="name"/>
+                    <field name="branch_uuid"/>
+                    <field name="status"/>
+                    <field name="area"/>
+                    <separator/>
+                    <filter string="Available" name="filter_available" domain="[('status', '=', 'available')]"/>
+                    <filter string="Occupied" name="filter_occupied" domain="[('status', '=', 'occupied')]"/>
+                    <filter string="Reserved" name="filter_reserved" domain="[('status', '=', 'reserved')]"/>
+                    <separator/>
+                     <filter string="Indoor" name="filter_indoor" domain="[('area', '=', 'indoor')]"/>
+                     <filter string="Outdoor" name="filter_outdoor" domain="[('area', '=', 'outdoor')]"/>
+                    <separator/>
+                    <filter string="Archived" name="inactive" domain="[('active', '=', False)]"/>
+                    <group expand="0" string="Group By">
+                        <filter string="Branch" name="group_by_branch" context="{'group_by': 'branch_uuid'}"/>
+                        <filter string="Status" name="group_by_status" context="{'group_by': 'status'}"/>
+                        <filter string="Area" name="group_by_area" context="{'group_by': 'area'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record id="action_table" model="ir.actions.act_window">
+            <field name="name">Tables</field>
+            <field name="res_model">restaurant_management.table</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="view_table_search"/>
+            <field name="context">{}</field>
+             <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Define the tables available in your restaurant branches!
+                </p><p>
+                    Add tables with their capacity, area, and link them to a branch.
+                </p>
+            </field>
+        </record>
+
+        <menuitem id="menu_table"
+                  name="Tables"
+                  parent="menu_restaurant_config"
+                  action="action_table"
+                  sequence="20"/>
+
+    </data>
+</odoo>

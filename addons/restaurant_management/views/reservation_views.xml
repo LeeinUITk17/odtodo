@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="view_reservation_tree" model="ir.ui.view">
+            <field name="name">restaurant.management.reservation.tree</field>
+            <field name="model">restaurant_management.reservation</field>
+            <field name="arch" type="xml">
+                <tree string="Reservations" decoration-info="status=='pending'" decoration-success="status=='confirmed'" decoration-muted="status=='cancelled'">
+                    <field name="name" string="Customer Name"/>
+                    <field name="phone" optional="show"/>
+                    <field name="table_uuid"/>
+                    <field name="branch_uuid" optional="show"/>
+                    <field name="reservation_date"/>
+                    <field name="status"/>
+                    <field name="uuid" optional="hide"/>
+                    <field name="created_at" optional="hide"/>
+                </tree>
+            </field>
+        </record>
+
+  <record id="view_reservation_form" model="ir.ui.view">
+            <field name="name">restaurant.management.reservation.form</field>
+            <field name="model">restaurant_management.reservation</field>
+            <field name="arch" type="xml">
+                <form string="Reservation">
+                    <header>
+                        <!-- Buttons for status changes -->
+                        <button name="action_confirm"
+                                type="object"
+                                string="Confirm"
+                                class="oe_highlight"
+                                attrs="{'invisible': [('status', '!=', 'pending')]}"
+                                help="Confirm this reservation"/>
+                        <button name="action_cancel"
+                                type="object"
+                                string="Cancel"
+                                attrs="{'invisible': [('status', 'not in', ['pending', 'confirmed'])]}"
+                                help="Cancel this reservation"/>
+                        <button name="action_reset_to_pending"
+                                type="object"
+                                string="Reset to Pending"
+                                attrs="{'invisible': [('status', 'not in', ['confirmed', 'cancelled'])]}"
+                                help="Set this reservation back to pending state"/>
+                        <!-- Status bar -->
+                        <field name="status" widget="statusbar" statusbar_visible="pending,confirmed,cancelled"/>
+                    </header>
+                    <sheet style="margin-top: 10px;">
+                         <group name="main_details">
+                             <group>
+                                <field name="name" string="Customer Name"/>
+                                <field name="phone"/>
+                                <field name="table_uuid" options="{'no_create': True}" context="{'branch_uuid': branch_uuid}" domain="[('branch_uuid', '=', branch_uuid)]"/> <!-- Added domain/context for table selection -->
+                             </group>
+                            <group>
+                                <field name="branch_uuid" options="{'no_create': True}"/>
+                                <field name="reservation_date"/>
+                            </group>
+                        </group>
+                         <group string="Technical Information" name="tech_info" col="4">
+                             <field name="uuid" readonly="1"/>
+                             <field name="created_at" readonly="1"/>
+                             <field name="updated_at" readonly="1"/>
+                         </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_reservation_search" model="ir.ui.view">
+            <field name="name">restaurant.management.reservation.search</field>
+            <field name="model">restaurant_management.reservation</field>
+            <field name="arch" type="xml">
+                <search string="Search Reservations">
+                    <field name="name" string="Customer Name"/>
+                    <field name="phone"/>
+                    <field name="table_uuid"/>
+                    <field name="branch_uuid"/>
+                    <field name="uuid" string="UUID"/>
+                    <separator/>
+                    <field name="reservation_date"/>
+                    <separator/>
+                    <filter string="Pending" name="pending" domain="[('status', '=', 'pending')]"/>
+                    <filter string="Confirmed" name="confirmed" domain="[('status', '=', 'confirmed')]"/>
+                    <filter string="Cancelled" name="cancelled" domain="[('status', '=', 'cancelled')]"/>
+                    <separator/>
+                    <group expand="0" string="Group By">
+                        <filter string="Branch" name="group_by_branch" context="{'group_by': 'branch_uuid'}"/>
+                        <filter string="Table" name="group_by_table" context="{'group_by': 'table_uuid'}"/>
+                        <filter string="Status" name="group_by_status" context="{'group_by': 'status'}"/>
+                        <filter string="Reservation Date" name="group_by_date" context="{'group_by': 'reservation_date:day'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record id="action_reservation" model="ir.actions.act_window">
+            <field name="name">Reservations</field>
+            <field name="res_model">restaurant_management.reservation</field>
+            <field name="view_mode">tree,form,calendar</field>
+            <field name="search_view_id" ref="view_reservation_search"/>
+            <field name="context">{'search_default_pending': 1, 'search_default_confirmed': 1}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Create a new reservation!
+                </p><p>
+                    Manage customer table reservations for your restaurant branches.
+                </p>
+            </field>
+        </record>
+
+        <record id="view_reservation_calendar" model="ir.ui.view">
+            <field name="name">restaurant.management.reservation.calendar</field>
+            <field name="model">restaurant_management.reservation</field>
+            <field name="arch" type="xml">
+                <calendar string="Reservations" date_start="reservation_date" color="status" mode="month">
+                    <field name="name" string="Customer Name"/>
+                    <field name="table_uuid"/>
+                </calendar>
+            </field>
+        </record>
+
+        <menuitem id="menu_reservation"
+                  name="Reservations"
+                  parent="menu_restaurant_root"
+                  action="action_reservation"
+                  sequence="20"/>
+
+    </data>
+</odoo>

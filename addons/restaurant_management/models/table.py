@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from odoo import models, fields, api # Import api
+from odoo import models, fields
 import uuid
 
 class Table(models.Model):
@@ -7,6 +7,9 @@ class Table(models.Model):
     _description = "Restaurant Table"
     _rec_name = 'name'
     _order = 'name asc'
+
+    # Add this field if it's not already there
+    active = fields.Boolean(default=True, index=True, string="Active")
 
     uuid = fields.Char(string="UUID", default=lambda self: str(uuid.uuid4()), required=True, copy=False, readonly=True, index=True)
     name = fields.Char(string="Table Name", required=True)
@@ -23,11 +26,6 @@ class Table(models.Model):
     ], string="Status", default='available', index=True)
 
     branch_uuid = fields.Many2one('restaurant_management.branch', string="Branch", required=True, ondelete='cascade', index=True)
-
-    # Ensure 'table_uuid' exists on order_management.order
-    # Ensure 'order_management' is a dependency
     order_uuids = fields.One2many('restaurant_management.order', 'table_uuid', string="Orders")
-    # REMOVED //
-
-    created_at = fields.Datetime(string="Created At", default=fields.Datetime.now, readonly=True) # Add field definition if needed
-    updated_at = fields.Datetime(string="Updated At", default=fields.Datetime.now, readonly=True) # Add field definition if needed
+    created_at = fields.Datetime(string="Created At", default=fields.Datetime.now, readonly=True)
+    updated_at = fields.Datetime(string="Updated At", default=fields.Datetime.now, readonly=True)
