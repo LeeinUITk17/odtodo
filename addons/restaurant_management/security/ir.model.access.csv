@@ -7,3 +7,4 @@ access_restaurant_management_order_user,restaurant_management.order.user,model_r
 access_restaurant_management_orderitem_user,restaurant_management.orderitem.user,model_restaurant_management_orderitem,base.group_user,1,1,1,1
 access_restaurant_management_category_user,restaurant_management.category.user,model_restaurant_management_category,base.group_user,1,1,1,1
 access_restaurant_management_menuitem_user,restaurant_management.menuitem.user,model_restaurant_management_menuitem,base.group_user,1,1,1,1
+access_restaurant_add_menu_item_wizard_user,access.restaurant.add.menu.item.wizard.user,model_restaurant_management_add_menu_item_wizard,base.group_user,1,1,1,1

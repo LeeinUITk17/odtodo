@@ -8,6 +8,10 @@ class MenuItem(models.Model):
     _order = 'name asc'
     _rec_name = 'name'
 
+        # --- THÊM TRƯỜNG NÀY ---
+    active = fields.Boolean(default=True, index=True, string="Active")
+    # ----------------------
+
     # --- Add these fields for currency support ---
     company_id = fields.Many2one('res.company', string='Company', required=True, readonly=True, default=lambda self: self.env.company)
     currency_id = fields.Many2one(related='company_id.currency_id', store=True, string="Currency")

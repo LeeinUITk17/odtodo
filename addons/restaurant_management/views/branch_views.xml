@@ -34,6 +34,11 @@
                              <button name="action_view_categories" type="object" class="oe_stat_button" icon="fa-tags" help="View all menu categories (not specific to this branch)">
                                      <span class="o_stat_text"></span>
                              </button>
+                             
+                             <button name="action_view_orders" type="object" class="oe_stat_button" icon="fa-shopping-cart"> 
+                             <field name="order_count" widget="statinfo" string="Orders"/> 
+                             </button>
+                             
                         </div>
                     </header>
                     <sheet style="margin-top: 20px;">

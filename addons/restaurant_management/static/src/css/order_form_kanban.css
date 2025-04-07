@@ -1,0 +1,121 @@
+/* === ORDER FORM KANBAN STYLES - CSS GRID APPROACH (3 Rows, Horizontal Scroll) === */
+
+/* Target the specific Kanban renderer within the Order Form field */
+.o_form_view .o_field_widget[name="available_menu_item_ids"] .o_kanban_renderer {
+    padding: 0 !important;
+    box-sizing: border-box;
+    width: 100% !important; /* Ensure it takes full width */
+    overflow: hidden; /* Hide potential overflow from renderer itself */
+}
+
+/* Container holding the cards within each group or when ungrouped */
+/* Try targeting the direct container of records */
+.o_form_view .o_field_widget[name="available_menu_item_ids"] .o_kanban_renderer .o_kanban_record_container, /* Odoo 16+ ? */
+.o_form_view .o_field_widget[name="available_menu_item_ids"] .o_kanban_renderer .o_kanban_group > div[class*="o_kanban_record"], /* Older grouped */
+.o_form_view .o_field_widget[name="available_menu_item_ids"] .o_kanban_renderer.o_kanban_ungrouped /* Ungrouped */ {
+    display: grid !important; /* Use CSS Grid */
+    grid-template-rows: repeat(3, auto) !important; /* Define 3 rows with auto height */
+    grid-auto-flow: column !important; /* Fill columns first, causing horizontal flow */
+    grid-gap: 10px !important; /* Spacing between grid items (rows and columns) */
+
+    /* Enable horizontal scrolling */
+    overflow-x: auto !important;
+    overflow-y: hidden !important; /* Important: Disable vertical scroll here */
+
+    /* Give it some space */
+    padding: 10px 5px !important;
+    margin: 0 !important;
+
+    /* Reset heights, let content define row height */
+    min-height: unset !important;
+    max-height: unset !important;
+    height: auto !important;
+
+    /* Make sure it spans */
+    width: 100% !important;
+    box-sizing: border-box !important;
+    white-space: nowrap; /* Helps with horizontal layout in some cases */
+}
+
+/* Target EACH KANBAN RECORD (or the inner card directly if needed) */
+.o_form_view .o_field_widget[name="available_menu_item_ids"] .o_kanban_renderer .o_kanban_record,
+.o_form_view .o_field_widget[name="available_menu_item_ids"] .o_kanban_renderer .oe_kanban_card /* Also target the card */ {
+    /* Define the width of each item/column */
+    width: 150px !important; /* Adjust this width as needed */
+    min-width: 140px !important; /* Minimum width */
+    height: auto !important; /* Auto height */
+    margin: 0 !important; /* Reset margin, use grid-gap */
+    box-sizing: border-box !important;
+    display: flex !important; /* Ensure card itself uses flex */
+    flex-direction: column !important;
+    position: relative;
+    vertical-align: top; /* Align items to the top */
+}
+
+
+/* Inner card styling (mostly unchanged) */
+.o_form_view .o_field_widget[name="available_menu_item_ids"] .o_kanban_renderer .oe_kanban_card .card {
+    height: 100% !important;
+    min-height: 180px;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden;
+    border: 1px solid #dee2e6; /* Add subtle border */
+    border-radius: .25rem;
+}
+.o_form_view .o_field_widget[name="available_menu_item_ids"] .o_kanban_renderer .oe_kanban_card .card-img-top {
+     height: 100px !important;
+     object-fit: cover !important;
+     flex-shrink: 0;
+     border-bottom: 1px solid #dee2e6; /* Separator line */
+}
+.o_form_view .o_field_widget[name="available_menu_item_ids"] .o_kanban_renderer .oe_kanban_card .card-body {
+    padding: 0.5rem !important;
+    flex-grow: 1;
+    display: flex !important;
+    flex-direction: column !important;
+}
+.o_form_view .o_field_widget[name="available_menu_item_ids"] .o_kanban_renderer .oe_kanban_card .card-title {
+    font-size: 0.8rem !important;
+    margin-bottom: 0.25rem !important;
+    white-space: normal;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    display: -webkit-box;
+   -webkit-line-clamp: 2;
+   -webkit-box-orient: vertical;
+   min-height: 2.4em;
+}
+.o_form_view .o_field_widget[name="available_menu_item_ids"] .o_kanban_renderer .oe_kanban_card .card-text {
+    margin-bottom: 0.5rem !important;
+}
+.o_form_view .o_field_widget[name="available_menu_item_ids"] .o_kanban_renderer .oe_kanban_card .mt-auto {
+    margin-top: auto !important;
+    padding-top: 0.5rem;
+}
+
+/* Scrollbar styles */
+.o_form_view .o_field_widget[name="available_menu_item_ids"] .o_kanban_renderer .o_kanban_record_container::-webkit-scrollbar,
+.o_form_view .o_field_widget[name="available_menu_item_ids"] .o_kanban_renderer .o_kanban_group > div[class*="o_kanban_record"]::-webkit-scrollbar,
+.o_form_view .o_field_widget[name="available_menu_item_ids"] .o_kanban_renderer.o_kanban_ungrouped::-webkit-scrollbar {
+    height: 8px !important; /* Height of horizontal scrollbar */
+    width: 8px !important; /* Also set width for vertical (though should be hidden) */
+}
+.o_form_view .o_field_widget[name="available_menu_item_ids"] .o_kanban_renderer .o_kanban_record_container::-webkit-scrollbar-track,
+.o_form_view .o_field_widget[name="available_menu_item_ids"] .o_kanban_renderer .o_kanban_group > div[class*="o_kanban_record"]::-webkit-scrollbar-track,
+.o_form_view .o_field_widget[name="available_menu_item_ids"] .o_kanban_renderer.o_kanban_ungrouped::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+/* ... rest of scrollbar styles ... */
+.o_form_view .o_field_widget[name="available_menu_item_ids"] .o_kanban_renderer .o_kanban_record_container::-webkit-scrollbar-thumb,
+.o_form_view .o_field_widget[name="available_menu_item_ids"] .o_kanban_renderer .o_kanban_group > div[class*="o_kanban_record"]::-webkit-scrollbar-thumb,
+.o_form_view .o_field_widget[name="available_menu_item_ids"] .o_kanban_renderer.o_kanban_ungrouped::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 10px;
+}
+.o_form_view .o_field_widget[name="available_menu_item_ids"] .o_kanban_renderer .o_kanban_record_container::-webkit-scrollbar-thumb:hover,
+.o_form_view .o_field_widget[name="available_menu_item_ids"] .o_kanban_renderer .o_kanban_group > div[class*="o_kanban_record"]::-webkit-scrollbar-thumb:hover,
+.o_form_view .o_field_widget[name="available_menu_item_ids"] .o_kanban_renderer.o_kanban_ungrouped::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}

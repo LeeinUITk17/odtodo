@@ -2,7 +2,6 @@
     'name': 'Restaurant Management',
     'version': '1.0',
     'summary': 'Manage restaurant branches, tables, reservations, and customers',
-    'category': 'Restaurant', 
     'description': """
         A module to manage restaurant operations including:
         - Branch management
@@ -12,15 +11,24 @@
     'author': 'NexaLap',
     'website': 'https://www.odooclass.com', 
     'category': 'Restaurant',
-    'depends': ['base','web'],  # Ensure dependencies are correct
+    'depends': ['base','web','mail'],  # Ensure dependencies are correct
     'data': [
         'security/ir.model.access.csv',
         'views/branch_views.xml',
-        'views/table_views.xml',  
+        'views/table_views.xml',
         'views/category_views.xml',
-        'views/menu_item_views.xml',
+        # Đưa file wizard lên TRƯỚC các file view sử dụng nó
+        'wizard/add_menu_item_wizard_views.xml', # <<< LOAD WIZARD VIEW TRƯỚC
+        'views/order_views.xml',                  # <<< LOAD ORDER VIEW SAU
+        'views/menu_item_views.xml',          # (menu_item_view cũng nên load sau wizard nếu có dùng)
         'views/reservation_views.xml',
     ],
+     # THÊM PHẦN ASSETS
+    'assets': {
+        'web.assets_backend': [
+            'restaurant_management/static/src/css/order_form_kanban.css',
+        ],
+    },
     'installable': True,
     'application': True,
     'auto_install': False,

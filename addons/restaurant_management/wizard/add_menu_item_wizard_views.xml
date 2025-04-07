@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_add_menu_item_wizard_form" model="ir.ui.view">
+            <field name="name">add.menu.item.wizard.form</field>
+            <field name="model">restaurant_management.add.menu.item.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Add Item to Order">
+                    <group>
+                         <field name="order_id" invisible="1"/> <!-- Hidden but needed -->
+                         <field name="menu_item_id" invisible="1"/> <!-- Hidden but needed -->
+                         <field name="menu_item_name"/>
+                         <field name="unit_price" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                         <field name="currency_id" invisible="1"/>
+                         <field name="quantity"/>
+                    </group>
+                    <footer>
+                        <button name="action_confirm_add_item" string="Confirm Add" type="object" class="btn-primary" data-hotkey="q"/>
+                        <button string="Cancel" class="btn-secondary" special="cancel" data-hotkey="z"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_add_menu_item_to_order_wizard" model="ir.actions.act_window">
+            <field name="name">Add Menu Item</field>
+            <field name="res_model">restaurant_management.add.menu.item.wizard</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field> <!-- Open as a modal dialog -->
+            <field name="binding_model_id" eval="False"/> <!-- Do not show in "Action" menu -->
+        </record>
+    </data>
+</odoo>
