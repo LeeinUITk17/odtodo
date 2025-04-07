@@ -1,0 +1,74 @@
+/* === Custom Styles for Form View Smart Buttons === */
+
+/* Container for the buttons */
+.o_form_view .oe_button_box {
+    display: flex;
+    flex-wrap: wrap; /* Allow buttons to wrap on smaller screens */
+    gap: 8px; /* Add space between buttons */
+    margin-bottom: 16px; /* Add space below the button box */
+}
+
+/* Style each smart button */
+.o_form_view .oe_button_box .oe_stat_button {
+    background-color: #f8f9fa; /* Light grey background */
+    border: 1px solid #dee2e6; /* Subtle border */
+    border-radius: 5px; /* Rounded corners */
+    padding: 8px 12px; /* Adjust padding */
+    min-width: 120px; /* Minimum width for consistency */
+    text-align: center; /* Center align text */
+    display: flex;
+    flex-direction: column; /* Stack icon and text vertically */
+    align-items: center; /* Center items horizontally */
+    justify-content: center; /* Center items vertically */
+    color: #495057; /* Default text color */
+    transition: background-color 0.2s ease, box-shadow 0.2s ease; /* Smooth transition for hover */
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05); /* Subtle shadow */
+    text-decoration: none !important; /* Remove underline from link-like button */
+}
+
+/* Hover effect */
+.o_form_view .oe_button_box .oe_stat_button:hover {
+    background-color: #e9ecef; /* Slightly darker background on hover */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+    color: #212529; /* Darker text on hover */
+    cursor: pointer;
+}
+
+/* Icon styling */
+.o_form_view .oe_button_box .oe_stat_button .o_stat_icon,
+.o_form_view .oe_button_box .oe_stat_button > .fa { /* Target direct FontAwesome icon too */
+    font-size: 1.5em; /* Make icon larger */
+    margin-bottom: 5px; /* Space below icon */
+    color: #6c757d; /* Muted icon color */
+}
+
+.o_form_view .oe_button_box .oe_stat_button:hover .o_stat_icon,
+.o_form_view .oe_button_box .oe_stat_button:hover > .fa {
+     color: #495057; /* Slightly darker icon on hover */
+}
+
+
+/* Stat info container (value and text) */
+.o_form_view .oe_button_box .oe_stat_button .o_stat_info {
+    line-height: 1.2;
+}
+
+/* Stat value (the number) */
+.o_form_view .oe_button_box .oe_stat_button .o_stat_value {
+    font-size: 1.1em;
+    font-weight: 600; /* Bold number */
+    display: block; /* Ensure it takes its own line if needed */
+    color: #343a40;
+}
+
+/* Stat text (the label) */
+.o_form_view .oe_button_box .oe_stat_button .o_stat_text {
+    display: none !important; /* Hide the text element */
+}
+
+/* Ensure statinfo widget itself doesn't interfere too much */
+.o_form_view .oe_button_box .oe_stat_button .o_field_widget.o_statinfo {
+    padding: 0;
+    margin: 0;
+    line-height: inherit;
+}
