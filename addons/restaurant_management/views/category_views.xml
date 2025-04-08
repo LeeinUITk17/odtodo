@@ -79,7 +79,9 @@
                   name="Menu Categories"
                   parent="menu_restaurant_config" 
                   action="action_category"
-                  sequence="30"/>
+                  sequence="30"
+                  groups="restaurant_management.group_restaurant_manager"
+                  />
 
     </data>
 </odoo>

@@ -169,6 +169,6 @@
             </field>
         </record>
 
-        <menuitem id="menu_restaurant_order" name="Orders" parent="menu_restaurant_root" action="action_restaurant_order" sequence="30"/>
+        <menuitem id="menu_restaurant_order" name="Orders" parent="menu_restaurant_root" action="action_restaurant_order" sequence="30" groups="restaurant_management.group_restaurant_waiter"/>
     </data>
 </odoo>

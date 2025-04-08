@@ -96,6 +96,7 @@
                   name="Customers"
                   parent="menu_restaurant_root"
                   action="action_customer"
-                  sequence="50"/>
+                  sequence="50"
+                  groups="restaurant_management.group_restaurant_waiter"/>
     </data>
 </odoo>
