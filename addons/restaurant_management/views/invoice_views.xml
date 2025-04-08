@@ -27,7 +27,7 @@
                         <button name="action_post" type="object" string="Post" class="oe_highlight" attrs="{'invisible': [('status', '!=', 'draft')]}"/>
                         <button name="action_pay" type="object" string="Register Payment" class="oe_highlight" attrs="{'invisible': [('status', '!=', 'posted')]}"/>
                         <button name="action_cancel" type="object" string="Cancel" attrs="{'invisible': [('status', 'not in', ['draft', 'posted'])]}"/>
-                        <button name="action_draft" type="object" string="Reset to Draft" attrs="{'invisible': [('status', 'not in', ['cancelled'])]}"/>
+                        <button name="action_draft" type="object" string="Reset to Draft" attrs="{'invisible': [('status', 'not in', ['cancelled'])]}" groups="restaurant_management.group_restaurant_manager"/>
                         <field name="status" widget="statusbar" statusbar_visible="draft,posted,paid,cancelled"/>
                     </header>
                     <sheet>
@@ -131,6 +131,6 @@
             </field>
         </record>
 
-        <menuitem id="menu_invoice" name="Invoices" parent="menu_restaurant_root" action="action_invoice" sequence="40"/>
+        <menuitem id="menu_invoice" name="Invoices" parent="menu_restaurant_root" action="action_invoice" sequence="40" groups="restaurant_management.group_restaurant_cashier"/>
     </data>
 </odoo>

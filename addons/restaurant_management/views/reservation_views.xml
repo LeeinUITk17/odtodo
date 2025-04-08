@@ -109,7 +109,7 @@
             </field>
         </record>
 
-        <menuitem id="menu_reservation" name="Reservations" parent="menu_restaurant_root" action="action_reservation" sequence="20"/>
+        <menuitem id="menu_reservation" name="Reservations" parent="menu_restaurant_root" action="action_reservation" sequence="20" groups="restaurant_management.group_restaurant_cashier"/>
 
     </data>
 </odoo>

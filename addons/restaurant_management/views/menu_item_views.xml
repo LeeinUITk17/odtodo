@@ -83,7 +83,9 @@
                   name="Menu Items"
                   parent="menu_restaurant_config"
                   action="action_menuitem"
-                  sequence="40"/>
+                  sequence="40"
+                  groups="restaurant_management.group_restaurant_manager"
+                  />
 
         <record id="view_menu_item_kanban_for_order" model="ir.ui.view">
             <field name="name">restaurant.management.menuitem.kanban.order.select</field>

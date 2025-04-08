@@ -103,7 +103,9 @@
                   name="Tables"
                   parent="menu_restaurant_config"
                   action="action_table"
-                  sequence="20"/>
+                  sequence="20"
+                  groups="restaurant_management.group_restaurant_manager"/>
+                  
 
     </data>
 </odoo>

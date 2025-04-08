@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1"> <!-- noupdate=1 để không ghi đè khi update module -->
+
+        <!-- 1. Định nghĩa Module Category -->
+        <!-- Danh mục này sẽ xuất hiện trong Settings > Users & Companies > Users > Access Rights -->
+        <record id="module_category_restaurant_management" model="ir.module.category">
+            <field name="name">Restaurant</field> <!-- Tên hiển thị của danh mục -->
+            <field name="description">User access levels for Restaurant Management module.</field>
+            <field name="sequence">25</field> <!-- Thứ tự xuất hiện -->
+        </record>
+
+        <!-- 2. Định nghĩa các Nhóm (Groups) -->
+        <!-- Nhóm Waiter (Nhân viên phục vụ) -->
+        <!-- Kế thừa quyền user cơ bản nhất để có thể đăng nhập và xem các menu cơ bản -->
+        <record id="group_restaurant_waiter" model="res.groups">
+            <field name="name">Waiter</field> <!-- Tên nhóm -->
+            <field name="category_id" ref="module_category_restaurant_management"/> <!-- Thuộc danh mục nào -->
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/> <!-- Kế thừa quyền của Internal User -->
+            <field name="comment">User can create/manage orders and customers.</field> <!-- Mô tả quyền -->
+        </record>
+
+        <!-- Nhóm Cashier (Thu ngân) -->
+        <!-- Kế thừa quyền của Waiter (có thể làm mọi thứ Waiter làm) -->
+        <record id="group_restaurant_cashier" model="res.groups">
+            <field name="name">Cashier</field>
+            <field name="category_id" ref="module_category_restaurant_management"/>
+            <field name="implied_ids" eval="[(4, ref('group_restaurant_waiter'))]"/> <!-- Kế thừa quyền của Waiter -->
+            <field name="comment">User can manage reservations, orders, invoices, and customers.</field>
+        </record>
+
+        <!-- Nhóm Manager (Quản lý) -->
+        <!-- Kế thừa quyền của Cashier (có thể làm mọi thứ Cashier làm) + quyền cấu hình -->
+        <record id="group_restaurant_manager" model="res.groups">
+            <field name="name">Manager</field>
+            <field name="category_id" ref="module_category_restaurant_management"/>
+            <field name="implied_ids" eval="[(4, ref('group_restaurant_cashier'))]"/> <!-- Kế thừa quyền của Cashier -->
+            <!-- Có thể thêm quyền truy cập vào các menu cấu hình bằng cách kế thừa group khác nếu cần -->
+            <!-- <field name="implied_ids" eval="[(4, ref('group_restaurant_cashier')), (4, ref('stock.group_stock_manager'))]"/> -->
+            <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/> <!-- Gán user admin mặc định vào nhóm này -->
+            <field name="comment">User has full access to all Restaurant features and configurations.</field>
+        </record>
+
+    </data>
+</odoo>

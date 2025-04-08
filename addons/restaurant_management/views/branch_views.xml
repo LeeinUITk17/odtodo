@@ -207,8 +207,24 @@
             </field>
         </record>
 
-        <menuitem id="menu_restaurant_root" name="Restaurant" sequence="10" web_icon="restaurant_management,static/description/icon.png"/>
-        <menuitem id="menu_restaurant_config" name="Root Manage" parent="menu_restaurant_root" sequence="100"/>
-        <menuitem id="menu_branch" name="Branches" parent="menu_restaurant_config" action="action_branch" sequence="10"/>
+       <menuitem id="menu_restaurant_root" name="Restaurant" sequence="10" web_icon="restaurant_management,static/description/icon.png"/>
+
+         <!-- ===== SỬA LẠI PHẦN MENU ITEMS NÀY ===== -->
+         <!-- Định nghĩa menu Config (chỉ Manager thấy) -->
+         <menuitem id="menu_restaurant_config"
+                   name="Root Manage"
+                   parent="menu_restaurant_root"
+                   sequence="100"
+                   groups="restaurant_management.group_restaurant_manager"/>
+
+         <!-- Định nghĩa menu Branches (nằm trong Config, chỉ Manager thấy) -->
+         <menuitem id="menu_branch"
+                   name="Branches"
+                   parent="menu_restaurant_config"
+                   action="action_branch"
+                   sequence="10"
+                   groups="restaurant_management.group_restaurant_manager"/>
+         <!-- ====================================== -->
+        
     </data>
 </odoo>

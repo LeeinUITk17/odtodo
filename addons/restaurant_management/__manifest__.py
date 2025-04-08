@@ -13,6 +13,7 @@
     'category': 'Restaurant',
     'depends': ['base','web','mail'],  # Ensure dependencies are correct
     'data': [
+        'security/restaurant_management_security.xml',
         'security/ir.model.access.csv',
         'data/ir_sequence_data.xml',
         'views/branch_views.xml',
