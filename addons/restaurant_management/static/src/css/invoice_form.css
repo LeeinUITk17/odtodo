@@ -1,0 +1,137 @@
+/* === Custom Styles for Invoice Form View - Professional + !important === */
+
+/* Main sheet styling */
+.o_form_view[data-model="restaurant_management.invoice"] .o_form_sheet_bg .o_form_sheet {
+    padding: 20px 25px !important;
+    background-color: #ffffff !important; /* Ensure white background */
+    border-radius: 4px !important;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08) !important; /* Slightly more visible shadow */
+    border: 1px solid #e9ecef !important; /* Lighter border */
+}
+
+/* Title styling */
+.o_form_view[data-model="restaurant_management.invoice"] .oe_title h1 {
+    font-size: 1.8rem !important;
+    font-weight: 500 !important;
+    color: #343a40 !important; /* Darker title */
+    margin-bottom: 20px !important;
+    padding-bottom: 10px !important;
+    border-bottom: 1px solid #e9ecef !important; /* Subtle separator */
+}
+.o_form_view[data-model="restaurant_management.invoice"] .oe_title h1 .o_field_widget {
+    color: #5a6268 !important;
+}
+
+/* Spacing for main groups */
+.o_form_view[data-model="restaurant_management.invoice"] .o_form_sheet > .o_group[name="main_details"] {
+    margin-bottom: 25px !important;
+}
+
+/* Group labels */
+.o_form_view[data-model="restaurant_management.invoice"] .o_group .o_td_label > label.o_form_label {
+    font-weight: 600 !important; /* Slightly bolder */
+    color: #495057 !important;
+    font-size: 0.875rem !important;
+    padding-right: 10px !important;
+    text-align: left !important; /* Ensure left alignment */
+    min-width: 120px; /* Give labels some minimum width */
+}
+/* Align value cells */
+.o_form_view[data-model="restaurant_management.invoice"] .o_group .o_td_label + td {
+    padding-left: 5px !important;
+}
+
+/* Notebook styling */
+.o_form_view[data-model="restaurant_management.invoice"] .o_notebook > .o_notebook_headers {
+    border-bottom: 1px solid #dee2e6 !important;
+    margin-bottom: 20px !important;
+}
+.o_form_view[data-model="restaurant_management.invoice"] .o_notebook > .o_notebook_headers .nav-item .nav-link {
+    border: 1px solid transparent !important;
+    border-bottom: none !important;
+    color: #6c757d !important;
+    font-weight: 500 !important;
+    padding: 0.7rem 1.3rem !important; /* Slightly more padding */
+    margin-right: 2px;
+}
+.o_form_view[data-model="restaurant_management.invoice"] .o_notebook > .o_notebook_headers .nav-item .nav-link.active {
+    border-color: #dee2e6 #dee2e6 #ffffff !important;
+    border-top-left-radius: 0.3rem !important;
+    border-top-right-radius: 0.3rem !important;
+    color: #0d6efd !important; /* Primary color for active tab */
+    background-color: #ffffff !important;
+    position: relative;
+    top: 1px; /* Align with border */
+}
+.o_form_view[data-model="restaurant_management.invoice"] .o_notebook > .tab-content {
+    padding-top: 15px !important;
+}
+
+/* Invoice Lines Tree styling */
+.o_form_view[data-model="restaurant_management.invoice"] .o_field_x2many_list_editable .o_list_view {
+    border: 1px solid #dee2e6 !important;
+    border-radius: 3px;
+}
+.o_form_view[data-model="restaurant_management.invoice"] .o_field_x2many_list_editable th {
+    background-color: #f8f9fa !important; /* Light header for lines */
+    font-weight: 600 !important;
+    color: #495057 !important;
+    border-bottom: 2px solid #dee2e6 !important;
+}
+.o_form_view[data-model="restaurant_management.invoice"] .o_field_x2many_list_editable .o_data_row:hover {
+    background-color: #eef3ff !important; /* Light blue hover */
+}
+
+/* === Totals Section styling (Updated for Cách 1) === */
+.o_form_view[data-model="restaurant_management.invoice"] .oe_subtotal_footer {
+    margin-top: 30px !important;
+    padding-top: 15px !important;
+    border-top: 1px solid #dee2e6 !important;
+    background-color: #f8f9fa !important;
+    border-radius: 0 0 4px 4px;
+    padding-right: 20px; /* Thêm padding phải */
+}
+.o_form_view[data-model="restaurant_management.invoice"] .oe_subtotal_footer td {
+     padding: 6px 10px !important; /* Tăng padding dọc */
+     vertical-align: middle; /* Căn giữa theo chiều dọc */
+}
+/* Label styling */
+.o_form_view[data-model="restaurant_management.invoice"] .oe_subtotal_footer label.o_form_label {
+    text-align: right !important;
+    font-weight: 600 !important;
+    color: #495057 !important;
+    white-space: nowrap; /* Không xuống dòng */
+}
+/* Value styling */
+.o_form_view[data-model="restaurant_management.invoice"] .oe_subtotal_footer .o_field_widget,
+.o_form_view[data-model="restaurant_management.invoice"] .oe_subtotal_footer span[class*='o_field'] {
+    font-size: 1rem !important;
+    font-weight: 500 !important;
+    text-align: right !important; /* Căn phải giá trị */
+    padding-left: 15px; /* Thêm khoảng cách trái */
+}
+/* Style đường kẻ (nếu dùng class trên label hoặc field) */
+.o_form_view[data-model="restaurant_management.invoice"] .oe_subtotal_footer .oe_subtotal_footer_separator > label.o_form_label,
+.o_form_view[data-model="restaurant_management.invoice"] .oe_subtotal_footer td.oe_subtotal_footer_separator { /* Target cả td nếu class trên field */
+     border-top: 1px solid #ced4da !important;
+     padding-top: 12px !important;
+     margin-top: 8px !important; /* Phải target đúng phần tử được tạo ra */
+     /* Lưu ý: Class oe_subtotal_footer_separator trên field có thể không tạo ra đường kẻ như mong đợi,
+        đặt trên label có thể hiệu quả hơn hoặc cần target td chứa field đó */
+}
+/* Grand Total styling */
+.o_form_view[data-model="restaurant_management.invoice"] .oe_subtotal_footer [name="grand_total"] .o_field_widget {
+    font-size: 1.25rem !important;
+    font-weight: 700 !important;
+    color: #dc3545 !important;
+}
+
+/* Style for statusbar */
+.o_form_view[data-model="restaurant_management.invoice"] .o_statusbar_status .o_arrow_button.btn-primary.disabled {
+    background-color: #6c757d !important; /* Grey out disabled primary status */
+    border-color: #6c757d !important;
+}
+.o_form_view[data-model="restaurant_management.invoice"] .o_statusbar_status .o_arrow_button.btn-primary:not(.disabled):hover {
+     background-color: #0b5ed7 !important; /* Darker blue on hover */
+     border-color: #0a58ca !important;
+}
