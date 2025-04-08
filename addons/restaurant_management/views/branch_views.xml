@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_branch_tree" model="ir.ui.view">
+             <field name="name">restaurant.management.branch.tree</field>
+             <field name="model">restaurant_management.branch</field>
+             <field name="arch" type="xml">
+                <tree string="Branches" decoration-muted="active == False">
+                    <field name="name"/>
+                    <field name="location"/>
+                    <field name="table_count" optional="show"/>
+                    <field name="menu_item_count" optional="show"/>
+                    <field name="reservation_count" optional="show"/>
+                    <field name="uuid" optional="hide"/>
+                    <field name="created_at" optional="hide"/>
+                    <field name="active" invisible="1"/>
+                </tree>
+             </field>
+         </record>
+
+        <record id="view_branch_form" model="ir.ui.view">
+            <field name="name">restaurant.management.branch.form</field>
+            <field name="model">restaurant_management.branch</field>
+            <field name="arch" type="xml">
+                <form string="Branch">
+                    <header>
+                        <div class="oe_button_box" name="button_box">
+                             <button name="action_view_tables" type="object" class="oe_stat_button" icon="fa-cutlery" help="View tables associated with this branch">
+                                     <field name="table_count" widget="statinfo" />
+                             </button>
+                             <button name="action_view_menu_items" type="object" class="oe_stat_button" icon="fa-list-alt" help="View menu items available at this branch">
+                                     <field name="menu_item_count" widget="statinfo" />
+                             </button>
+                             <button name="action_view_categories" type="object" class="oe_stat_button" icon="fa-tags" help="View all menu categories (not specific to this branch)">
+                                     <span class="o_stat_text"></span>
+                             </button>
+                             
+                             <button name="action_view_orders" type="object" class="oe_stat_button" icon="fa-shopping-cart"> 
+                             <field name="order_count" widget="statinfo" string="Orders"/> 
+                             </button>
+                             
+                        </div>
+                    </header>
+                    <sheet style="margin-top: 20px;">
+                         <widget name="web_ribbon" title="Archived" bg_color="bg-danger" attrs="{'invisible': [('active', '=', True)]}"/>
+                         <group name="main_info">
+                             <group>
+                                <field name="name" placeholder="e.g., Downtown Branch"/>
+                                <field name="location" placeholder="e.g., 123 Main St, Anytown"/>
+                                <field name="active" invisible="1"/>
+                            </group>
+                            <group string="Technical Information" name="tech_info">
+                                <field name="uuid" readonly="1"/>
+                                <field name="created_at" readonly="1"/>
+                                <field name="updated_at" readonly="1"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Tables" name="tables">
+                                <field name="tables" readonly="1"> <tree><field name="name"/><field name="area"/><field name="capacity"/><field name="status"/></tree> <form><group><field name="name"/><field name="area"/><field name="capacity"/><field name="status"/></group></form> </field>
+                            </page>
+                            <page string="Menu Items" name="menu_items">
+                                <field name="menu_items" context="{'default_branch_uuid': active_id}"> <tree editable="bottom"><field name="name"/><field name="category_uuid"/><field name="price"/></tree> <form><group><field name="name"/><field name="category_uuid"/><field name="branch_uuid"/><field name="price"/><field name="description"/></group></form> </field>
+                            </page>
+                            <page string="Reservations" name="reservations">
+                                <field name="reservations" readonly="1">
+                                     <tree>
+                                        <field name="name" string="Customer Name"/>
+                                        <field name="phone" optional="show"/>
+                                        <field name="table_uuid"/>
+                                        <field name="reservation_date"/>
+                                        <field name="status"/>
+                                    </tree>
+                                     <form>
+                                        <group>
+                                             <field name="name" string="Customer Name"/>
+                                             <field name="phone"/>
+                                             <field name="table_uuid"/>
+                                             <field name="reservation_date"/>
+                                             <field name="status"/>
+                                         </group>
+                                    </form>
+                                </field>
+                            </page>
+                             <page string="Orders" name="orders">
+                                <field name="orders" readonly="1"> <tree><field name="table_uuid"/><field name="status"/><field name="total_price"/><field name="created_at"/></tree> <form><group><field name="table_uuid"/><field name="status"/><field name="total_price"/><field name="created_at"/></group></form> </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_branch_form_inherit_reservation" model="ir.ui.view">
+            <field name="name">restaurant.management.branch.form.inherit.reservation</field>
+            <field name="model">restaurant_management.branch</field>
+            <field name="inherit_id" ref="restaurant_management.view_branch_form"/>
+            <field name="arch" type="xml">
+                 <xpath expr="//div[@name='button_box']" position="inside">
+                     <button name="action_view_reservations"
+                             type="object"
+                             class="oe_stat_button"
+                             icon="fa-calendar-check-o"
+                             help="View reservations for this branch">
+                              <field name="reservation_count" widget="statinfo" string="Reservations"/>
+                     </button>
+                 </xpath>
+            </field>
+        </record>
+
+     <record id="view_branch_search" model="ir.ui.view">
+         <field name="name">restaurant.management.branch.search</field>
+         <field name="model">restaurant_management.branch</field>
+         <field name="arch" type="xml">
+             <search string="Search Branches">
+                 <field name="name" string="Branch Name"/> <field name="location"/> <field name="uuid" string="UUID"/> <separator/>
+                 <filter string="Archived" name="inactive" domain="[('active', '=', False)]"/>
+                 <group expand="0" string="Group By"> <filter string="Location" name="group_by_location" context="{'group_by': 'location'}"/> </group>
+             </search>
+         </field>
+     </record>
+
+     <record id="action_branch" model="ir.actions.act_window">
+         <field name="name">Branches</field> <field name="res_model">restaurant_management.branch</field> <field name="view_mode">tree,form</field>
+         <field name="search_view_id" ref="view_branch_search"/> <field name="context">{'search_default_active': 1}</field>
+         <field name="help" type="html"> <p class="o_view_nocontent_smiling_face"> Create a new branch for your restaurant! </p><p> Manage different locations of your restaurant chain here. Add tables and menu items specific to each branch. </p> </field>
+     </record>
+
+     <menuitem id="menu_restaurant_root" name="Restaurant" sequence="10" web_icon="restaurant_management,static/description/icon.png"/>
+     <menuitem id="menu_restaurant_config" name="Configuration" parent="menu_restaurant_root" sequence="100"/>
+     <menuitem id="menu_branch" name="Branches" parent="menu_restaurant_config" action="action_branch" sequence="10"/>
+    </data>
+</odoo>

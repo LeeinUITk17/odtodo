@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="view_category_tree" model="ir.ui.view">
+            <field name="name">restaurant.management.category.tree</field>
+            <field name="model">restaurant_management.category</field>
+            <field name="arch" type="xml">
+                <tree string="Menu Categories">
+                    <field name="name"/>
+                    <field name="uuid" optional="hide"/>
+                    <field name="deleted_at" optional="show"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_category_form" model="ir.ui.view">
+            <field name="name">restaurant.management.category.form</field>
+            <field name="model">restaurant_management.category</field>
+            <field name="arch" type="xml">
+                <form string="Menu Category">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="name"/>
+                            </group>
+                            <group string="Technical Info" col="4">
+                                <field name="uuid" readonly="1"/>
+                                <field name="created_at" readonly="1"/>
+                                <field name="updated_at" readonly="1"/>
+                                <field name="deleted_at" readonly="1"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Menu Items" name="menu_items">
+                                <field name="menu_item_uuids" readonly="1">
+                                    <tree>
+                                        <field name="name"/>
+                                        <field name="price"/>
+                                        <field name="branch_uuid"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_category_search" model="ir.ui.view">
+            <field name="name">restaurant.management.category.search</field>
+            <field name="model">restaurant_management.category</field>
+            <field name="arch" type="xml">
+                <search string="Search Menu Categories">
+                    <field name="name"/>
+                    <field name="uuid"/>
+                    <filter string="Deleted" name="filter_deleted" domain="[('deleted_at', '!=', False)]"/>
+                    <group expand="0" string="Group By">
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record id="action_category" model="ir.actions.act_window">
+            <field name="name">Menu Categories</field>
+            <field name="res_model">restaurant_management.category</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="view_category_search"/>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Create a new category for your menu items!
+                </p><p>
+                    Group your menu items (e.g., Appetizers, Main Courses, Desserts).
+                </p>
+            </field>
+        </record>
+
+        <menuitem id="menu_category"
+                  name="Menu Categories"
+                  parent="menu_restaurant_config" 
+                  action="action_category"
+                  sequence="30"/>
+
+    </data>
+</odoo>

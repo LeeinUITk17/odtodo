@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_order_tree" model="ir.ui.view">
+            <field name="name">restaurant.management.order.tree</field>
+            <field name="model">restaurant_management.order</field>
+            <field name="arch" type="xml">
+                <tree string="Restaurant Orders" decoration-info="status=='PENDING'" decoration-success="status=='COMPLETED'" decoration-muted="status=='CANCELED'">
+                    <field name="name" string="Order Ref"/>
+                    <field name="branch_uuid"/>
+                    <field name="table_uuid" optional="show"/>
+                    <field name="total_price" sum="Total Amount" widget="monetary"/>
+                    <field name="status"/>
+                    <field name="created_at" string="Order Date"/>
+                    <field name="uuid" optional="hide"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_order_form" model="ir.ui.view">
+            <field name="name">restaurant.management.order.form</field>
+            <field name="model">restaurant_management.order</field>
+            <field name="arch" type="xml">
+                <form string="Restaurant Order">
+                    <header>
+                        <button name="action_complete" type="object" string="Mark as Completed" class="oe_highlight" attrs="{'invisible': [('status', '!=', 'PENDING')]}"/>
+                        <button name="action_cancel" type="object" string="Cancel Order" attrs="{'invisible': [('status', 'not in', ['PENDING', 'COMPLETED'])]}"/>
+                        <button name="action_reset_to_pending" type="object" string="Reset to Pending" attrs="{'invisible': [('status', 'not in', ['COMPLETED', 'CANCELED'])]}"/>
+                        <field name="status" widget="statusbar" statusbar_visible="PENDING,COMPLETED,CANCELED"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_title">
+                            <h1><field name="name" readonly="1"/></h1>
+                        </div>
+                        <group name="main_details">
+                            <group>
+                                <field name="branch_uuid" options="{'no_create': True}"/>
+                                <field name="table_uuid" options="{'no_create': True}" context="{'branch_uuid': branch_uuid}" attrs="{'readonly': [('branch_uuid', '=', False)]}"/>
+                            </group>
+                            <group>
+                                <field name="created_at" readonly="1"/>
+                                <field name="uuid" readonly="1"/>
+                            </group>
+                        </group>
+                       <separator string="Select Menu Items" attrs="{'invisible': [('branch_uuid', '=', False)]}"/>
+                             <field name="available_menu_item_ids"
+                                    nolabel="1"
+                                    mode="kanban"
+                                    domain="[('branch_uuid', '=', branch_uuid), ('active', '=', True)]"
+                                    attrs="{'readonly': [('status', '!=', 'PENDING')]}">
+                                 <kanban default_group_by="category_uuid" class="o_kanban_small_column" quick_create="false" create="false" import="false">
+                                     <field name="name"/>
+                                     <field name="price"/>
+                                     <field name="currency_id"/>
+                                     <field name="category_uuid"/>
+                                     <field name="image"/>
+                                     <field name="uuid"/>
+                                     <templates>
+                                         <t t-name="kanban-box">
+                                            <div class="oe_kanban_card oe_kanban_global_click">
+                                                <div class="card h-100 shadow-sm">
+                                                     <img t-att-src="kanban_image('restaurant_management.menuitem', 'image', record.id.raw_value, '/restaurant_management/static/src/img/default_dish.png')"
+                                                          class="card-img-top"
+                                                          alt="Menu Item Image"
+                                                          style="height: 120px; object-fit: cover;"/>
+                                                     <div class="card-body d-flex flex-column p-2">
+                                                         <h6 class="card-title text-truncate mb-1" style="font-size: 0.85rem;">
+                                                             <field name="name"/>
+                                                         </h6>
+                                                         <p class="card-text text-muted small mb-2">
+                                                             <field name="price" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                                                         </p>
+                                                         <div class="mt-auto text-center">
+                                                             <button name="%(restaurant_management.action_add_menu_item_to_order_wizard)d"
+                                                                     type="action"
+                                                                     class="btn btn-primary btn-sm w-100"
+                                                                     icon="fa-plus"
+                                                                     string="Add"
+                                                                     context="{
+                                                                         'default_order_id': parent.id,
+                                                                         'default_menu_item_id': id,
+                                                                         'default_quantity': 1
+                                                                     }"/>
+                                                          </div>
+                                                     </div>
+                                                </div>
+                                            </div>
+                                         </t>
+                                     </templates>
+                                 </kanban>
+                             </field>
+                        <separator string="Current Order Items"/>
+                        <field name="order_items" attrs="{'readonly': [('status', '!=', 'PENDING')]}">
+                            <tree editable="bottom">
+                                <field name="menu_item_uuid" readonly="1" options="{'no_create': True}"/>
+                                <field name="quantity"/>
+                                <field name="unitPrice" widget="monetary" readonly="1"/>
+                                <field name="subtotal" widget="monetary" sum="Total"/>
+                                <field name="uuid" optional="hide"/>
+                            </tree>
+                        </field>
+                        <group class="oe_subtotal_footer oe_right" colspan="2" name="order_total">
+                            <field name="total_price" nolabel="1" class="oe_subtotal_footer_separator" widget="monetary"/>
+                        </group>
+                        <div class="oe_clear"/>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_order_search" model="ir.ui.view">
+            <field name="name">restaurant.management.order.search</field>
+            <field name="model">restaurant_management.order</field>
+            <field name="arch" type="xml">
+                <search string="Search Orders">
+                    <field name="name" string="Order Reference"/>
+                    <field name="branch_uuid"/>
+                    <field name="table_uuid"/>
+                    <field name="uuid"/>
+                    <separator/>
+                    <field name="status"/>
+                    <separator/>
+                    <filter string="Pending" name="pending_orders" domain="[('status', '=', 'PENDING')]"/>
+                    <filter string="Completed" name="completed_orders" domain="[('status', '=', 'COMPLETED')]"/>
+                    <filter string="Canceled" name="canceled_orders" domain="[('status', '=', 'CANCELED')]"/>
+                    <separator/>
+                    <group expand="0" string="Group By">
+                        <filter string="Branch" name="group_by_branch" context="{'group_by': 'branch_uuid'}"/>
+                        <filter string="Table" name="group_by_table" context="{'group_by': 'table_uuid'}"/>
+                        <filter string="Status" name="group_by_status" context="{'group_by': 'status'}"/>
+                        <filter string="Order Date" name="group_by_date" context="{'group_by': 'created_at:day'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record id="action_restaurant_order" model="ir.actions.act_window">
+            <field name="name">Restaurant Orders</field>
+            <field name="res_model">restaurant_management.order</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="view_order_search"/>
+            <field name="context">{'search_default_pending_orders': 1}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Create a new restaurant order!
+                </p>
+                <p>
+                    Manage orders placed within your restaurant branches.
+                </p>
+            </field>
+        </record>
+
+        <menuitem id="menu_restaurant_order" name="Orders" parent="menu_restaurant_root" action="action_restaurant_order" sequence="30"/>
+    </data>
+</odoo>

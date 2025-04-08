@@ -6,3 +6,4 @@ from . import order
 from . import orderitem
 from . import menuitem
 from . import category
+from . import mixins

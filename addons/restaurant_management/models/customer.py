@@ -19,5 +19,5 @@ class Customer(models.Model):
 
     # Ensure 'customer_uuid' exists on invoice_management.invoice
     # Ensure 'invoice_management' module is a dependency if this field is used
-    invoice_ids = fields.One2many('invoice_management.invoice', 'customer_uuid', string='Invoices')
+    # invoice_ids = fields.One2many('invoice_management.invoice', 'customer_uuid', string='Invoices')
     # REMOVED //
