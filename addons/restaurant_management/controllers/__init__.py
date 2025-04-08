@@ -6,3 +6,5 @@ from . import order_controller
 from . import orderitem_controller
 from . import menuitem_controller
 from . import category_controller
+from . import invoice_controller
+from . import invoicedetail_controller

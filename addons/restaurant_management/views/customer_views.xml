@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_customer_tree" model="ir.ui.view">
+            <field name="name">restaurant.management.customer.tree</field>
+            <field name="model">restaurant_management.customer</field>
+            <field name="arch" type="xml">
+                <tree string="Customers" decoration-muted="deleted_at != False">
+                    <field name="name"/>
+                    <field name="phone"/>
+                    <field name="email" optional="show"/>
+                    <field name="birthday" optional="hide"/>
+                    <field name="uuid" optional="hide"/>
+                    <field name="created_at" optional="hide"/>
+                    <field name="deleted_at" optional="show"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_customer_form" model="ir.ui.view">
+            <field name="name">restaurant.management.customer.form</field>
+            <field name="model">restaurant_management.customer</field>
+            <field name="arch" type="xml">
+                <form string="Customer">
+                    <header/>
+                    <sheet>
+                        <widget name="web_ribbon" title="Deleted" bg_color="bg-danger" attrs="{'invisible': [('deleted_at', '=', False)]}"/>
+                        <group name="main_details">
+                            <group>
+                                <field name="name" placeholder="Customer's Full Name"/>
+                                <field name="phone" placeholder="+84123456789"/>
+                                <field name="email" widget="email" placeholder="example@mail.com"/>
+                                <field name="birthday"/>
+                            </group>
+                            <group string="Technical Information" name="tech_info">
+                                <field name="uuid" readonly="1"/>
+                                <field name="created_at" readonly="1"/>
+                                <field name="updated_at" readonly="1"/>
+                                <field name="deleted_at" readonly="1" attrs="{'invisible': [('deleted_at', '=', False)]}"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Invoices" name="customer_invoices">
+                                <field name="invoice_ids" readonly="1">
+                                    <tree>
+                                        <field name="order_uuid" string="Order Ref"/>
+                                        <field name="grand_total" sum="Grand Total" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                                        <field name="status"/>
+                                        <field name="payment_method"/>
+                                        <field name="created_at" string="Invoice Date"/>
+                                        <field name="currency_id" invisible="1"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_customer_search" model="ir.ui.view">
+            <field name="name">restaurant.management.customer.search</field>
+            <field name="model">restaurant_management.customer</field>
+            <field name="arch" type="xml">
+                <search string="Search Customers">
+                    <field name="name" string="Name"/>
+                    <field name="phone"/>
+                    <field name="email"/>
+                    <field name="uuid" string="UUID"/>
+                    <separator/>
+                    <filter string="Has Birthday" name="has_birthday" domain="[('birthday', '!=', False)]"/>
+                    <filter string="Deleted" name="deleted_customers" domain="[('deleted_at', '!=', False)]"/>
+                    <separator/>
+                    <group expand="0" string="Group By"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="action_customer" model="ir.actions.act_window">
+            <field name="name">Customers</field>
+            <field name="res_model">restaurant_management.customer</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="view_customer_search"/>
+            <field name="context">{}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Add your first customer!
+                </p>
+                <p>
+                    Manage your restaurant's customer database here.
+                </p>
+            </field>
+        </record>
+
+        <menuitem id="menu_customer"
+                  name="Customers"
+                  parent="menu_restaurant_root"
+                  action="action_customer"
+                  sequence="50"/>
+    </data>
+</odoo>

@@ -14,6 +14,7 @@
     'depends': ['base','web','mail'],  # Ensure dependencies are correct
     'data': [
         'security/ir.model.access.csv',
+        'data/ir_sequence_data.xml',
         'views/branch_views.xml',
         'views/table_views.xml',
         'views/category_views.xml',
@@ -22,11 +23,15 @@
         'views/order_views.xml',                  # <<< LOAD ORDER VIEW SAU
         'views/menu_item_views.xml',          # (menu_item_view cũng nên load sau wizard nếu có dùng)
         'views/reservation_views.xml',
+        'views/invoice_views.xml',
+        'views/customer_views.xml',
     ],
      # THÊM PHẦN ASSETS
     'assets': {
         'web.assets_backend': [
             'restaurant_management/static/src/css/order_form_kanban.css',
+            'restaurant_management/static/src/css/form_button_box.css',
+            'restaurant_management/static/src/css/invoice_form.css',
         ],
     },
     'installable': True,
