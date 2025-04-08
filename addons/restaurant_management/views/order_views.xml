@@ -5,12 +5,14 @@
             <field name="name">restaurant.management.order.tree</field>
             <field name="model">restaurant_management.order</field>
             <field name="arch" type="xml">
-                <tree string="Restaurant Orders" decoration-info="status=='PENDING'" decoration-success="status=='COMPLETED'" decoration-muted="status=='CANCELED'">
+                <tree string="Restaurant Orders" decoration-info="status=='PENDING'" decoration-muted="status=='CANCELED'"
+                      decoration-bf="invoice_status=='to_invoice'" decoration-success="invoice_status=='paid'">
                     <field name="name" string="Order Ref"/>
                     <field name="branch_uuid"/>
                     <field name="table_uuid" optional="show"/>
                     <field name="total_price" sum="Total Amount" widget="monetary"/>
                     <field name="status"/>
+                    <field name="invoice_status" widget="badge" decoration-success="invoice_status == 'paid'" decoration-info="invoice_status == 'invoiced'" decoration-warning="invoice_status == 'to_invoice'"/>
                     <field name="created_at" string="Order Date"/>
                     <field name="uuid" optional="hide"/>
                 </tree>
@@ -21,25 +23,42 @@
             <field name="name">restaurant.management.order.form</field>
             <field name="model">restaurant_management.order</field>
             <field name="arch" type="xml">
-                <form string="Restaurant Order">
+                <form string="Restaurant Order" class="o_form_readonly_bypass" attrs="{'readonly': [('invoice_status', '=', 'paid')]}">
                     <header>
-                        <button name="action_complete" type="object" string="Mark as Completed" class="oe_highlight" attrs="{'invisible': [('status', '!=', 'PENDING')]}"/>
-                        <button name="action_cancel" type="object" string="Cancel Order" attrs="{'invisible': [('status', 'not in', ['PENDING', 'COMPLETED'])]}"/>
-                        <button name="action_reset_to_pending" type="object" string="Reset to Pending" attrs="{'invisible': [('status', 'not in', ['COMPLETED', 'CANCELED'])]}"/>
+                        <button name="action_create_invoice" string="Create Invoice" type="object" class="btn-primary"
+                                attrs="{'invisible': [('invoice_status', '!=', 'to_invoice')]}"/> 
+                        <button name="action_complete" type="object" string="Mark as Completed" class="oe_highlight"
+                                attrs="{'invisible': ['|', ('status', '!=', 'PENDING'), ('invoice_status', '=', 'paid')]}"/>
+                        <button name="action_cancel" type="object" string="Cancel Order"
+                                attrs="{'invisible': ['|', ('status', 'not in', ['PENDING', 'COMPLETED']), ('invoice_status', '=', 'paid')]}"/>
+                        <button name="action_reset_to_pending" type="object" string="Reset to Pending"
+                                attrs="{'invisible': ['|', ('status', 'not in', ['COMPLETED', 'CANCELED']), ('invoice_status', '=', 'paid')]}"/>
                         <field name="status" widget="statusbar" statusbar_visible="PENDING,COMPLETED,CANCELED"/>
                     </header>
                     <sheet>
+                    <div class="oe_button_box" name="button_box">
+                             <button name="action_view_invoices"
+                                     type="object"
+                                     class="oe_stat_button"
+                                     icon="fa-file-text-o"
+                                     attrs="{'invisible': [('invoice_count', '=', 0)]}">
+                                  <field name="invoice_count" widget="statinfo" string="Invoices"/>
+                             </button>
+                         </div>
                         <div class="oe_title">
-                            <h1><field name="name" readonly="1"/></h1>
+                            <field name="invoice_status" widget="badge" decoration-success="invoice_status == 'paid'" decoration-info="invoice_status == 'invoiced'" decoration-warning="invoice_status == 'to_invoice'"/>
                         </div>
                         <group name="main_details">
                             <group>
                                 <field name="branch_uuid" options="{'no_create': True}"/>
                                 <field name="table_uuid" options="{'no_create': True}" context="{'branch_uuid': branch_uuid}" attrs="{'readonly': [('branch_uuid', '=', False)]}"/>
+                                <field name="customer_uuid" options="{'no_create_edit': False}" attrs="{'readonly': [('invoice_status', '=', 'paid')]}"/>
                             </group>
                             <group>
                                 <field name="created_at" readonly="1"/>
                                 <field name="uuid" readonly="1"/>
+                                <field name="company_id" readonly="1" groups="base.group_multi_company"/>
+                                <field name="currency_id" invisible="1"/>
                             </group>
                         </group>
                        <separator string="Select Menu Items" attrs="{'invisible': [('branch_uuid', '=', False)]}"/>
@@ -90,7 +109,7 @@
                                  </kanban>
                              </field>
                         <separator string="Current Order Items"/>
-                        <field name="order_items" attrs="{'readonly': [('status', '!=', 'PENDING')]}">
+                        <field name="order_items" attrs="{'readonly': ['|', ('status', '!=', 'PENDING'), ('invoice_status', '=', 'paid')]}">
                             <tree editable="bottom">
                                 <field name="menu_item_uuid" readonly="1" options="{'no_create': True}"/>
                                 <field name="quantity"/>

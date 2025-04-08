@@ -1,56 +1,53 @@
-# -*- coding: utf-8 -*-
-from odoo import models, fields, api, _ # Added _
-from odoo.exceptions import UserError    # Added UserError
+from odoo import models, fields, api, _
+from odoo.exceptions import UserError
 import uuid
 
 class Reservation(models.Model):
     _name = 'restaurant_management.reservation'
     _description = 'Reservation'
+    _inherit = ['mail.thread', 'mail.activity.mixin']
     _order = 'reservation_date desc, name asc'
 
     uuid = fields.Char(string="UUID", default=lambda self: str(uuid.uuid4()), required=True, copy=False, readonly=True, index=True)
-    name = fields.Char(string='Customer Name', required=True, index=True, tracking=True) # Added tracking
-    phone = fields.Char(string='Phone Number', required=True, tracking=True)             # Added tracking
-    branch_uuid = fields.Many2one('restaurant_management.branch', string='Branch', required=True, ondelete='cascade', index=True, tracking=True) # Added tracking
-    table_uuid = fields.Many2one('restaurant_management.table', string='Table', required=True, ondelete='cascade', index=True, tracking=True)       # Added tracking
-    reservation_date = fields.Datetime(string='Reservation Date', required=True, index=True, tracking=True) # Added tracking
+    customer_uuid = fields.Many2one(
+        'restaurant_management.customer', string='Customer',
+        required=True, ondelete='restrict', index=True, tracking=True,
+        help="Select an existing customer or create a new one."
+    )
+    name = fields.Char(string='Customer Name', related='customer_uuid.name', store=True, readonly=False)
+    phone = fields.Char(string='Phone Number', related='customer_uuid.phone', store=True, readonly=False)
+    branch_uuid = fields.Many2one('restaurant_management.branch', string='Branch', required=True, ondelete='cascade', index=True, tracking=True)
+    table_uuid = fields.Many2one('restaurant_management.table', string='Table', required=True, ondelete='cascade', index=True, tracking=True)
+    reservation_date = fields.Datetime(string='Reservation Date', required=True, index=True, tracking=True)
     status = fields.Selection([
         ('pending', 'Pending'),
         ('confirmed', 'Confirmed'),
         ('cancelled', 'Cancelled')
-        # Optional: Add 'seated', 'completed', 'no_show' for more detail later
-    ], string='Status', default='pending', required=True, index=True, tracking=True) # Added tracking
+    ], string='Status', default='pending', required=True, index=True, tracking=True)
     created_at = fields.Datetime(string='Created At', default=fields.Datetime.now, readonly=True)
     updated_at = fields.Datetime(string='Updated At', default=fields.Datetime.now, readonly=True)
 
-    # --- Action Methods for Status Updates ---
     def action_confirm(self):
-        """Confirms the reservation."""
         allowed_statuses = ['pending']
-        for res in self.filtered(lambda r: r.status in allowed_statuses):
-            res.write({'status': 'confirmed'})
-        # Raise error if trying to confirm non-pending reservations
-        if any(r.status not in allowed_statuses for r in self):
-             raise UserError(_("Only pending reservations can be confirmed."))
-        return True
+        if any(rec.status not in allowed_statuses for rec in self):
+            raise UserError(_("Only pending reservations can be confirmed."))
+        return self.write({'status': 'confirmed'})
 
     def action_cancel(self):
-        """Cancels the reservation."""
         allowed_statuses = ['pending', 'confirmed']
-        for res in self.filtered(lambda r: r.status in allowed_statuses):
-            res.write({'status': 'cancelled'})
-        # Raise error if trying to cancel already cancelled reservations
-        if any(r.status not in allowed_statuses for r in self):
+        if any(rec.status not in allowed_statuses for rec in self):
             raise UserError(_("Only pending or confirmed reservations can be cancelled."))
-        return True
+        return self.write({'status': 'cancelled'})
 
     def action_reset_to_pending(self):
-        """Resets the reservation back to pending."""
         allowed_statuses = ['confirmed', 'cancelled']
-        for res in self.filtered(lambda r: r.status in allowed_statuses):
-            res.write({'status': 'pending'})
-        # Raise error if trying to reset non-confirmed/cancelled reservations
-        if any(r.status not in allowed_statuses for r in self):
+        if any(rec.status not in allowed_statuses for rec in self):
             raise UserError(_("Only confirmed or cancelled reservations can be reset to pending."))
-        return True
-    # -----------------------------------------
+        return self.write({'status': 'pending'})
+
+    def write(self, vals):
+        if 'status' in vals and not vals.get('updated_at'):
+            vals['updated_at'] = fields.Datetime.now()
+        elif 'updated_at' not in vals and self.ids:
+            vals['updated_at'] = fields.Datetime.now()
+        return super(Reservation, self).write(vals)

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from odoo import models, fields
 import uuid
 
@@ -8,9 +7,7 @@ class Table(models.Model):
     _rec_name = 'name'
     _order = 'name asc'
 
-    # Add this field if it's not already there
     active = fields.Boolean(default=True, index=True, string="Active")
-
     uuid = fields.Char(string="UUID", default=lambda self: str(uuid.uuid4()), required=True, copy=False, readonly=True, index=True)
     name = fields.Char(string="Table Name", required=True)
     area = fields.Selection([
@@ -24,7 +21,6 @@ class Table(models.Model):
         ('occupied', 'Occupied'),
         ('reserved', 'Reserved')
     ], string="Status", default='available', index=True)
-
     branch_uuid = fields.Many2one('restaurant_management.branch', string="Branch", required=True, ondelete='cascade', index=True)
     order_uuids = fields.One2many('restaurant_management.order', 'table_uuid', string="Orders")
     created_at = fields.Datetime(string="Created At", default=fields.Datetime.now, readonly=True)

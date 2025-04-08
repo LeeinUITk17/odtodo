@@ -7,7 +7,7 @@
             <field name="model">restaurant_management.reservation</field>
             <field name="arch" type="xml">
                 <tree string="Reservations" decoration-info="status=='pending'" decoration-success="status=='confirmed'" decoration-muted="status=='cancelled'">
-                    <field name="name" string="Customer Name"/>
+                    <field name="customer_uuid" string="Customer"/>
                     <field name="phone" optional="show"/>
                     <field name="table_uuid"/>
                     <field name="branch_uuid" optional="show"/>
@@ -19,49 +19,35 @@
             </field>
         </record>
 
-  <record id="view_reservation_form" model="ir.ui.view">
+        <record id="view_reservation_form" model="ir.ui.view">
             <field name="name">restaurant.management.reservation.form</field>
             <field name="model">restaurant_management.reservation</field>
             <field name="arch" type="xml">
                 <form string="Reservation">
                     <header>
-                        <!-- Buttons for status changes -->
-                        <button name="action_confirm"
-                                type="object"
-                                string="Confirm"
-                                class="oe_highlight"
-                                attrs="{'invisible': [('status', '!=', 'pending')]}"
-                                help="Confirm this reservation"/>
-                        <button name="action_cancel"
-                                type="object"
-                                string="Cancel"
-                                attrs="{'invisible': [('status', 'not in', ['pending', 'confirmed'])]}"
-                                help="Cancel this reservation"/>
-                        <button name="action_reset_to_pending"
-                                type="object"
-                                string="Reset to Pending"
-                                attrs="{'invisible': [('status', 'not in', ['confirmed', 'cancelled'])]}"
-                                help="Set this reservation back to pending state"/>
-                        <!-- Status bar -->
+                        <button name="action_confirm" type="object" string="Confirm" class="oe_highlight" attrs="{'invisible': [('status', '!=', 'pending')]}"/>
+                        <button name="action_cancel" type="object" string="Cancel" attrs="{'invisible': [('status', 'not in', ['pending', 'confirmed'])]}"/>
+                        <button name="action_reset_to_pending" type="object" string="Reset to Pending" attrs="{'invisible': [('status', 'not in', ['confirmed', 'cancelled'])]}"/>
                         <field name="status" widget="statusbar" statusbar_visible="pending,confirmed,cancelled"/>
                     </header>
                     <sheet style="margin-top: 10px;">
-                         <group name="main_details">
-                             <group>
-                                <field name="name" string="Customer Name"/>
-                                <field name="phone"/>
-                                <field name="table_uuid" options="{'no_create': True}" context="{'branch_uuid': branch_uuid}" domain="[('branch_uuid', '=', branch_uuid)]"/> <!-- Added domain/context for table selection -->
-                             </group>
+                        <group name="main_details">
                             <group>
-                                <field name="branch_uuid" options="{'no_create': True}"/>
-                                <field name="reservation_date"/>
+                                <field name="customer_uuid" string="Customer (Name/Phone)" placeholder="Search or Create Customer..." options="{'no_create_edit': False, 'no_quick_create': False, 'no_open': False}" context="{'search_default_customer':1}" required="1"/>
+                                <field name="name" string="Customer Name (Auto)" readonly="1" force_save="1" optional="hide"/>
+                                <field name="phone" readonly="1" force_save="1" optional="hide"/>
+                                <field name="table_uuid" options="{'no_create': True}" context="{'branch_uuid': branch_uuid}" domain="[('branch_uuid', '=', branch_uuid)]" required="1"/>
+                            </group>
+                            <group>
+                                <field name="branch_uuid" options="{'no_create': True}" required="1"/>
+                                <field name="reservation_date" required="1"/>
                             </group>
                         </group>
-                         <group string="Technical Information" name="tech_info" col="4">
-                             <field name="uuid" readonly="1"/>
-                             <field name="created_at" readonly="1"/>
-                             <field name="updated_at" readonly="1"/>
-                         </group>
+                        <group string="Technical Information" name="tech_info" col="4">
+                            <field name="uuid" readonly="1"/>
+                            <field name="created_at" readonly="1"/>
+                            <field name="updated_at" readonly="1"/>
+                        </group>
                     </sheet>
                 </form>
             </field>
@@ -72,7 +58,8 @@
             <field name="model">restaurant_management.reservation</field>
             <field name="arch" type="xml">
                 <search string="Search Reservations">
-                    <field name="name" string="Customer Name"/>
+                    <field name="customer_uuid" string="Customer"/>
+                    <field name="name" string="Customer Name (in Reservation)"/>
                     <field name="phone"/>
                     <field name="table_uuid"/>
                     <field name="branch_uuid"/>
@@ -85,6 +72,7 @@
                     <filter string="Cancelled" name="cancelled" domain="[('status', '=', 'cancelled')]"/>
                     <separator/>
                     <group expand="0" string="Group By">
+                        <filter string="Customer" name="group_by_customer" context="{'group_by': 'customer_uuid'}"/>
                         <filter string="Branch" name="group_by_branch" context="{'group_by': 'branch_uuid'}"/>
                         <filter string="Table" name="group_by_table" context="{'group_by': 'table_uuid'}"/>
                         <filter string="Status" name="group_by_status" context="{'group_by': 'status'}"/>
@@ -103,7 +91,8 @@
             <field name="help" type="html">
                 <p class="o_view_nocontent_smiling_face">
                     Create a new reservation!
-                </p><p>
+                </p>
+                <p>
                     Manage customer table reservations for your restaurant branches.
                 </p>
             </field>
@@ -114,17 +103,13 @@
             <field name="model">restaurant_management.reservation</field>
             <field name="arch" type="xml">
                 <calendar string="Reservations" date_start="reservation_date" color="status" mode="month">
-                    <field name="name" string="Customer Name"/>
+                    <field name="customer_uuid" string="Customer"/>
                     <field name="table_uuid"/>
                 </calendar>
             </field>
         </record>
 
-        <menuitem id="menu_reservation"
-                  name="Reservations"
-                  parent="menu_restaurant_root"
-                  action="action_reservation"
-                  sequence="20"/>
+        <menuitem id="menu_reservation" name="Reservations" parent="menu_restaurant_root" action="action_reservation" sequence="20"/>
 
     </data>
 </odoo>

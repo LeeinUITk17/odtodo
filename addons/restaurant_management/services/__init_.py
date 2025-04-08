@@ -6,3 +6,5 @@ from . import order_service
 from . import orderitem_service
 from . import menuitem_service
 from . import category_service
+from . import invoice_service
+from . import invoicedetail_service

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1"> <!-- noupdate="1" để sequence không bị reset khi cập nhật module -->
+
+        <!-- Sequence for Restaurant Orders -->
+        <record id="seq_restaurant_order" model="ir.sequence">
+            <field name="name">Restaurant Order Sequence</field> <!-- Tên hiển thị của sequence -->
+            <field name="code">restaurant.order.sequence</field> <!-- Mã kỹ thuật PHẢI KHỚP với code trong Python -->
+            <field name="prefix">NexA/</field> <!-- Tiền tố cho số thứ tự (ví dụ: ORD/...) -->
+            <field name="padding">5</field> <!-- Số chữ số (ví dụ: 00001) -->
+            <field name="company_id" eval="False"/> <!-- Để dùng chung cho các công ty hoặc đặt company_id cụ thể -->
+        </record>
+            <!-- Sequence for Restaurant Invoices -->
+    <record id="seq_restaurant_invoice" model="ir.sequence">
+        <field name="name">Restaurant Invoice Sequence</field>
+        <field name="code">restaurant.invoice.sequence</field> <!-- Mã mới cho invoice -->
+        <field name="prefix">INV/</field> <!-- Tiền tố (ví dụ: INV/) -->
+        <field name="padding">6</field> <!-- Số chữ số -->
+        <field name="company_id" eval="False"/>
+    </record>
+
+    </data>
+</odoo>
