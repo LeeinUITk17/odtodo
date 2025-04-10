@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<templates xml:space="preserve">
+    <t t-name="restaurant_management.MenuGrid" owl="1">
+        <div class="menu-grid p-2 h-100 d-flex flex-column">
+            <h5 class="mb-2">Menu Items</h5>
+            <div class="category-filter mb-3 btn-group flex-wrap" role="group">
+                <button type="button" class="btn btn-sm"
+                        t-att-class="state.selectedCategoryId === null ? 'btn-primary' : 'btn-outline-secondary'"
+                        t-on-click="() => this.selectCategory(null)">All</button>
+                <t t-foreach="props.categories" t-as="category" t-key="category.id">
+                    <button type="button" class="btn btn-sm"
+                            t-att-class="state.selectedCategoryId === category.id ? 'btn-primary' : 'btn-outline-secondary'"
+                            t-on-click="() => this.selectCategory(category.id)">
+                        <t t-esc="category.name"/>
+                    </button>
+                </t>
+            </div>
+            <div class="menu-items-container flex-grow-1 overflow-auto">
+                <div class="row g-2">
+                    <t t-if="filteredMenuItems.length === 0">
+                        <p class="text-muted text-center col-12 mt-4">No menu items found for this category.</p>
+                    </t>
+                    <t t-else="">
+                        <t t-foreach="filteredMenuItems" t-as="item" t-key="item.id">
+                            <div class="col-lg-4 col-md-6 col-sm-6 col-12">
+                                <div class="card h-100 shadow-sm menu-item-card">
+                                    <img t-att-src="item.image ? '/web/image/restaurant_management.menuitem/' + item.id + '/image' : '/restaurant_management/static/src/img/default_dish.png'"
+                                         class="card-img-top"
+                                         alt="Menu Item Image"
+                                         style="height: 100px; object-fit: cover;"/>
+                                    <div class="card-body d-flex flex-column p-2">
+                                        <h6 class="card-title text-truncate mb-1" style="font-size: 0.85rem;">
+                                            <t t-esc="item.name"/>
+                                        </h6>
+                                        <p class="card-text text-muted small mb-2">
+                                            $<t t-esc="item.price.toFixed(2)"/>
+                                        </p>
+                                        <div class="mt-auto text-center">
+                                            <button class="btn btn-sm btn-outline-primary w-100" t-on-click="() => this.addToCart(item)">
+                                                <i class="fa fa-plus me-1"/> Add
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </t>
+                </div>
+            </div>
+        </div>
+    </t>
+</templates>

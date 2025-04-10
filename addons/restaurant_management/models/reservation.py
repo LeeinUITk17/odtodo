@@ -11,19 +11,19 @@ class Reservation(models.Model):
     uuid = fields.Char(string="UUID", default=lambda self: str(uuid.uuid4()), required=True, copy=False, readonly=True, index=True)
     customer_uuid = fields.Many2one(
         'restaurant_management.customer', string='Customer',
-        required=True, ondelete='restrict', index=True, tracking=True,
+        required=True, ondelete='restrict', index=True,
         help="Select an existing customer or create a new one."
     )
     name = fields.Char(string='Customer Name', related='customer_uuid.name', store=True, readonly=False)
     phone = fields.Char(string='Phone Number', related='customer_uuid.phone', store=True, readonly=False)
-    branch_uuid = fields.Many2one('restaurant_management.branch', string='Branch', required=True, ondelete='cascade', index=True, tracking=True)
-    table_uuid = fields.Many2one('restaurant_management.table', string='Table', required=True, ondelete='cascade', index=True, tracking=True)
-    reservation_date = fields.Datetime(string='Reservation Date', required=True, index=True, tracking=True)
+    branch_uuid = fields.Many2one('restaurant_management.branch', string='Branch', required=True, ondelete='cascade', index=True)
+    table_uuid = fields.Many2one('restaurant_management.table', string='Table', required=True, ondelete='cascade', index=True)
+    reservation_date = fields.Datetime(string='Reservation Date', required=True, index=True)
     status = fields.Selection([
         ('pending', 'Pending'),
         ('confirmed', 'Confirmed'),
         ('cancelled', 'Cancelled')
-    ], string='Status', default='pending', required=True, index=True, tracking=True)
+    ], string='Status', default='pending', required=True, index=True)
     created_at = fields.Datetime(string='Created At', default=fields.Datetime.now, readonly=True)
     updated_at = fields.Datetime(string='Updated At', default=fields.Datetime.now, readonly=True)
 

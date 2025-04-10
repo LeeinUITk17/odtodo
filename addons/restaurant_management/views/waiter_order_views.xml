@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="action_waiter_order_interface" model="ir.actions.client">
+            <field name="name">Waiter Order Interface</field>
+            <field name="tag">restaurant_management.WaiterOrderScreen</field>
+        </record>
+
+        <menuitem id="menu_waiter_new_order"
+                  name="New Order (Waiter)"
+                  parent="menu_restaurant_root"
+                  action="action_waiter_order_interface"
+                  sequence="5"
+                  groups="restaurant_management.group_restaurant_waiter"/>
+    </data>
+</odoo>

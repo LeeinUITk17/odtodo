@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Inherit Form view of Users to add the branch field -->
+        <record id="view_users_form_inherit_branch" model="ir.ui.view">
+            <field name="name">res.users.form.inherit.branch</field>
+            <field name="model">res.users</field>
+            <!-- Vẫn kế thừa từ base.view_users_form vì đây là ID chuẩn, dù có thể không thấy tên đó -->
+            <field name="inherit_id" ref="base.view_users_form"/>
+            <field name="arch" type="xml">
+                <!-- Cách 1: Thêm vào group chứa thông tin Contact -->
+                <!-- Tìm trường 'email' và thêm field 'branch_id' sau nó -->
+                <!-- <xpath expr="//field[@name='email']" position="after">
+                     <field name="branch_id" options="{'no_create': True, 'no_open': True}"/>
+                </xpath> -->
+
+                <!-- Cách 2: Thêm vào group chứa các công ty được phép -->
+                <!-- Tìm trường 'company_ids' và thêm field 'branch_id' trước nó -->
+                <xpath expr="//field[@name='company_ids']" position="before">
+                     <field name="branch_id" options="{'no_create': True, 'no_open': True}"/>
+                </xpath>
+
+                 <!-- Cách 3: Thêm vào tab Preferences (nếu có) -->
+                 <!-- <xpath expr="//page[@name='preferences']//group[1]" position="inside">
+                      <group string="Restaurant Assignment" name="restaurant_assignment">
+                           <field name="branch_id" options="{'no_create': True, 'no_open': True}"/>
+                      </group>
+                 </xpath> -->
+            </field>
+        </record>
+    </data>
+</odoo>
