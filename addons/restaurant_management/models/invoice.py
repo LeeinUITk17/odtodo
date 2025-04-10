@@ -9,36 +9,36 @@ class Invoice(models.Model):
 
     order_uuid = fields.Many2one(
         "restaurant_management.order", string="Select Order",
-        ondelete="restrict", index=True, tracking=True,
+        ondelete="restrict", index=True,
         domain="[('status', '=', 'COMPLETED'), ('invoice_count', '=', 0)]"
     )
     customer_uuid = fields.Many2one(
         "restaurant_management.customer", string="Customer (Name or Phone)",
-        ondelete='restrict', index=True, tracking=True,
+        ondelete='restrict', index=True,
         help="Search by Name or Phone. Create new if not found."
     )
     uuid = fields.Char(string="UUID", default=lambda self: str(uuid.uuid4()), required=True, copy=False, readonly=True, index=True)
     company_id = fields.Many2one('res.company', string='Company', required=True, readonly=True, default=lambda self: self.env.company)
     currency_id = fields.Many2one(related='company_id.currency_id', store=True, string="Currency", readonly=True)
-    total_price = fields.Monetary(string="Subtotal", compute='_compute_total_amounts', store=True, currency_field='currency_id', tracking=True)
-    tax = fields.Monetary(string="Tax (10%)", compute='_compute_total_amounts', store=True, currency_field='currency_id', tracking=True, readonly=True)
-    grand_total = fields.Monetary(string="Grand Total", compute='_compute_total_amounts', store=True, currency_field='currency_id', tracking=True)
+    total_price = fields.Monetary(string="Subtotal", compute='_compute_total_amounts', store=True, currency_field='currency_id')
+    tax = fields.Monetary(string="Tax (10%)", compute='_compute_total_amounts', store=True, currency_field='currency_id', readonly=True)
+    grand_total = fields.Monetary(string="Grand Total", compute='_compute_total_amounts', store=True, currency_field='currency_id')
     payment_method = fields.Selection([
         ('cash', 'Cash'),
         ('credit_card', 'Credit Card'),
         ('bank_transfer', 'Bank Transfer'),
         ('online_payment', 'Online Payment')
-    ], string="Payment Method", tracking=True)
+    ], string="Payment Method")
     status = fields.Selection([
         ('draft', 'Draft'),
         ('posted', 'Posted'),
         ('paid', 'Paid'),
         ('cancelled', 'Cancelled')
-    ], string="Invoice Status", default="draft", required=True, index=True, tracking=True)
+    ], string="Invoice Status", default="draft", required=True, index=True)
     created_at = fields.Datetime(string="Created At", default=fields.Datetime.now, readonly=True)
     updated_at = fields.Datetime(string="Updated At", default=fields.Datetime.now, readonly=True)
-    coupon_uuid = fields.Char(string="Coupon Code", tracking=True)
-    promotion_uuid = fields.Char(string="Promotion Applied", tracking=True)
+    coupon_uuid = fields.Char(string="Coupon Code")
+    promotion_uuid = fields.Char(string="Promotion Applied")
     details = fields.One2many("restaurant_management.invoicedetail", "invoice_uuid", string="Invoice Details")
 
     @api.onchange('order_uuid')

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<templates xml:space="preserve">
+    <t t-name="restaurant_management.OrderCart" owl="1">
+        <div class="order-cart p-3 border rounded bg-light h-100 d-flex flex-column">
+            <h5>
+                Current Order 
+                <t t-if="props.selectedTable">
+                    for Table 
+                    <span class="fw-bold text-primary">
+                        <t t-esc="props.selectedTable.name"/>
+                    </span>
+                </t>
+            </h5>
+            <hr/>
+            <div class="order-lines flex-grow-1 overflow-auto mb-3">
+                <t t-if="props.orderLines.length === 0">
+                    <p class="text-muted text-center mt-4">Cart is empty. Select items from the menu.</p>
+                </t>
+                <t t-else="">
+                    <ul class="list-group list-group-flush">
+                        <t t-foreach="props.orderLines" t-as="line" t-key="line.menuItemId">
+                            <li class="list-group-item d-flex justify-content-between align-items-center px-1 py-2">
+                                <div class="me-2">
+                                    <span class="fw-medium d-block">
+                                        <t t-esc="line.name"/>
+                                    </span>
+                                    <small class="text-muted"> @ $<t t-esc="line.price.toFixed(2)"/></small>
+                                </div>
+                                <div class="d-flex align-items-center">
+                                    <input type="number" class="form-control form-control-sm text-center mx-2" style="width: 60px;"
+                                           t-att-value="line.qty"
+                                           t-on-change="(ev) => this.updateQty(line, ev)"
+                                           min="0"/>
+                                    <span class="fw-bold ms-2" style="min-width: 70px; text-align: right;">
+                                        $<t t-esc="line.subtotal.toFixed(2)"/>
+                                    </span>
+                                    <button class="btn btn-sm btn-danger ms-2" t-on-click="() => this.props.onUpdateQty(line, 0)">X</button>
+                                </div>
+                            </li>
+                        </t>
+                    </ul>
+                </t>
+            </div>
+            <hr/>
+            <div class="order-total d-flex justify-content-between fs-5 fw-bold mb-3">
+                <span>Total:</span>
+                <span>$<t t-esc="props.total.toFixed(2)"/></span>
+            </div>
+            <button class="btn btn-success w-100" t-on-click="props.onSendOrder" t-att-disabled="!props.selectedTable || props.orderLines.length === 0">
+                Send Order to Kitchen
+            </button>
+        </div>
+    </t>
+</templates>

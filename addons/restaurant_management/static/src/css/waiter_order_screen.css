@@ -1,0 +1,59 @@
+.waiter-order-screen {
+    font-family: 'Poppins', sans-serif;
+}
+
+.waiter-order-screen .row > div[class*="col-"] {
+    height: calc(100vh - 120px);
+    overflow-y: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.waiter-order-screen .table-list,
+.waiter-order-screen .menu-items-container,
+.waiter-order-screen .order-lines {
+    overflow-y: auto;
+    flex-grow: 1;
+}
+
+.table-list .btn {
+    min-height: 70px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.table-list .btn small {
+    font-size: 0.75rem;
+}
+
+.menu-item-card {
+    cursor: pointer;
+    transition: transform 0.1s ease-in-out, box-shadow 0.1s ease-in-out;
+}
+
+.menu-item-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1) !important;
+}
+
+.menu-item-card .card-body .btn {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.8rem;
+}
+
+.order-cart {
+    font-size: 0.9rem;
+}
+
+.order-cart .list-group-item {
+    border: none;
+    border-bottom: 1px solid #eee;
+}
+
+.order-cart .list-group-item:last-child {
+    border-bottom: none;
+}

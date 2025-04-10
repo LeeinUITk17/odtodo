@@ -9,3 +9,4 @@ from . import order
 from . import invoicedetail
 from . import invoice
 from . import customer
+from . import res_users

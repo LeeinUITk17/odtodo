@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<templates xml:space="preserve">
+    <t t-name="restaurant_management.TableList" owl="1">
+        <div class="table-list p-2 h-100 overflow-auto">
+            <h5 class="mb-3">Select Table</h5>
+            <div class="d-grid gap-2" style="grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));">
+                <t t-foreach="props.tables" t-as="table" t-key="table.id">
+                    <button class="btn btn-lg"
+                            t-att-class="{
+                                'btn-primary': props.selectedTable and table.id === props.selectedTable.id,
+                                'btn-outline-secondary': !props.selectedTable or table.id !== props.selectedTable.id
+                            }"
+                            t-on-click="() => this.selectTable(table)">
+                        <i class="fa fa-square-o me-1"/>
+                        <span class="fw-bold d-block"><t t-esc="table.name"/></span>
+                        <small class="text-muted">(<t t-esc="table.capacity"/> seats)</small>
+                    </button>
+                </t>
+                <t t-if="props.tables.length === 0">
+                    <p class="text-muted">No available tables.</p>
+                </t>
+            </div>
+        </div>
+    </t>
+</templates>

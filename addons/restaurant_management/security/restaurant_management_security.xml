@@ -1,45 +1,128 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <data noupdate="1"> <!-- noupdate=1 để không ghi đè khi update module -->
-
-        <!-- 1. Định nghĩa Module Category -->
-        <!-- Danh mục này sẽ xuất hiện trong Settings > Users & Companies > Users > Access Rights -->
+    <data noupdate="1">
         <record id="module_category_restaurant_management" model="ir.module.category">
-            <field name="name">Restaurant</field> <!-- Tên hiển thị của danh mục -->
+            <field name="name">Restaurant</field>
             <field name="description">User access levels for Restaurant Management module.</field>
-            <field name="sequence">25</field> <!-- Thứ tự xuất hiện -->
+            <field name="sequence">25</field>
         </record>
 
-        <!-- 2. Định nghĩa các Nhóm (Groups) -->
-        <!-- Nhóm Waiter (Nhân viên phục vụ) -->
-        <!-- Kế thừa quyền user cơ bản nhất để có thể đăng nhập và xem các menu cơ bản -->
         <record id="group_restaurant_waiter" model="res.groups">
-            <field name="name">Waiter</field> <!-- Tên nhóm -->
-            <field name="category_id" ref="module_category_restaurant_management"/> <!-- Thuộc danh mục nào -->
-            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/> <!-- Kế thừa quyền của Internal User -->
-            <field name="comment">User can create/manage orders and customers.</field> <!-- Mô tả quyền -->
+            <field name="name">Waiter</field>
+            <field name="category_id" ref="module_category_restaurant_management"/>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+            <field name="comment">User can create/manage orders and customers.</field>
         </record>
 
-        <!-- Nhóm Cashier (Thu ngân) -->
-        <!-- Kế thừa quyền của Waiter (có thể làm mọi thứ Waiter làm) -->
         <record id="group_restaurant_cashier" model="res.groups">
             <field name="name">Cashier</field>
             <field name="category_id" ref="module_category_restaurant_management"/>
-            <field name="implied_ids" eval="[(4, ref('group_restaurant_waiter'))]"/> <!-- Kế thừa quyền của Waiter -->
+            <field name="implied_ids" eval="[(4, ref('group_restaurant_waiter'))]"/>
             <field name="comment">User can manage reservations, orders, invoices, and customers.</field>
         </record>
 
-        <!-- Nhóm Manager (Quản lý) -->
-        <!-- Kế thừa quyền của Cashier (có thể làm mọi thứ Cashier làm) + quyền cấu hình -->
         <record id="group_restaurant_manager" model="res.groups">
             <field name="name">Manager</field>
             <field name="category_id" ref="module_category_restaurant_management"/>
-            <field name="implied_ids" eval="[(4, ref('group_restaurant_cashier'))]"/> <!-- Kế thừa quyền của Cashier -->
-            <!-- Có thể thêm quyền truy cập vào các menu cấu hình bằng cách kế thừa group khác nếu cần -->
-            <!-- <field name="implied_ids" eval="[(4, ref('group_restaurant_cashier')), (4, ref('stock.group_stock_manager'))]"/> -->
-            <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/> <!-- Gán user admin mặc định vào nhóm này -->
+            <field name="implied_ids" eval="[(4, ref('group_restaurant_cashier'))]"/>
+            <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
             <field name="comment">User has full access to all Restaurant features and configurations.</field>
         </record>
 
+        <record id="order_branch_rule_user" model="ir.rule">
+            <field name="name">Order: Branch User Access</field>
+            <field name="model_id" ref="model_restaurant_management_order"/>
+            <field name="domain_force">[('branch_uuid', 'in', user.branch_id.ids)]</field>
+            <field name="groups" eval="[(6, 0, [ref('group_restaurant_waiter'), ref('group_restaurant_cashier')])]"/>
+            <field name="global" eval="True"/>
+        </record>
+
+        <record id="order_branch_rule_manager" model="ir.rule">
+            <field name="name">Order: Manager Full Access</field>
+            <field name="model_id" ref="model_restaurant_management_order"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(6, 0, [ref('group_restaurant_manager')])]"/>
+            <field name="global" eval="False"/>
+        </record>
+
+        <record id="reservation_branch_rule_user" model="ir.rule">
+            <field name="name">Reservation: Branch User Access</field>
+            <field name="model_id" ref="model_restaurant_management_reservation"/>
+            <field name="domain_force">[('branch_uuid', 'in', user.branch_id.ids)]</field>
+            <field name="groups" eval="[(6, 0, [ref('group_restaurant_waiter'), ref('group_restaurant_cashier')])]"/>
+            <field name="global" eval="True"/>
+        </record>
+
+        <record id="reservation_branch_rule_manager" model="ir.rule">
+            <field name="name">Reservation: Manager Full Access</field>
+            <field name="model_id" ref="model_restaurant_management_reservation"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(6, 0, [ref('group_restaurant_manager')])]"/>
+            <field name="global" eval="False"/>
+        </record>
+
+        <record id="table_branch_rule_user" model="ir.rule">
+            <field name="name">Table: Branch User Access</field>
+            <field name="model_id" ref="model_restaurant_management_table"/>
+            <field name="domain_force">[('branch_uuid', 'in', user.branch_id.ids)]</field>
+            <field name="groups" eval="[(6, 0, [ref('base.group_user')])]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+            <field name="global" eval="True"/>
+        </record>
+
+        <record id="table_branch_rule_manager" model="ir.rule">
+            <field name="name">Table: Manager Full Access</field>
+            <field name="model_id" ref="model_restaurant_management_table"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(6, 0, [ref('group_restaurant_manager')])]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+            <field name="global" eval="False"/>
+        </record>
+
+        <record id="menuitem_branch_rule_user" model="ir.rule">
+            <field name="name">MenuItem: Branch User Access</field>
+            <field name="model_id" ref="model_restaurant_management_menuitem"/>
+            <field name="domain_force">[('branch_uuid', 'in', user.branch_id.ids)]</field>
+            <field name="groups" eval="[(6, 0, [ref('base.group_user')])]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+            <field name="global" eval="True"/>
+        </record>
+
+        <record id="menuitem_branch_rule_manager" model="ir.rule">
+            <field name="name">MenuItem: Manager Full Access</field>
+            <field name="model_id" ref="model_restaurant_management_menuitem"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(6, 0, [ref('group_restaurant_manager')])]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+            <field name="global" eval="False"/>
+        </record>
+
+        <record id="invoice_branch_rule_user" model="ir.rule">
+            <field name="name">Invoice: Branch User Access</field>
+            <field name="model_id" ref="model_restaurant_management_invoice"/>
+            <field name="domain_force">[('order_uuid.branch_uuid', '=', user.branch_id.id)]</field>
+            <field name="groups" eval="[(6, 0, [ref('group_restaurant_waiter'), ref('group_restaurant_cashier')])]"/>
+            <field name="global" eval="True"/>
+        </record>
+
+        <record id="invoice_branch_rule_manager" model="ir.rule">
+            <field name="name">Invoice: Manager Full Access</field>
+            <field name="model_id" ref="model_restaurant_management_invoice"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(6, 0, [ref('group_restaurant_manager')])]"/>
+            <field name="global" eval="False"/>
+        </record>
     </data>
 </odoo>

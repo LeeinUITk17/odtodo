@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<templates xml:space="preserve">
+    <t t-name="restaurant_management.WaiterOrderScreen" owl="1">
+        <div class="waiter-order-screen d-flex flex-column vh-100 bg-light p-3">
+            <div class="screen-header d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom">
+                <h4>Waiter Order Interface</h4>
+            </div>
+            <div t-if="state.isLoading" class="d-flex justify-content-center align-items-center flex-grow-1">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <span class="ms-2">Loading data...</span>
+            </div>
+            <div t-else="" class="row g-3 flex-grow-1 overflow-hidden">
+                <div class="col-md-3 d-flex flex-column">
+                    <TableList tables="state.tables"
+                               selectedTable="state.selectedTable"
+                               onSelectTable="selectTable"/>
+                </div>
+                <div class="col-md-6 d-flex flex-column">
+                    <MenuGrid menuItems="state.menuItems"
+                              categories="state.categories"
+                              onAddToCart="addToCart"/>
+                </div>
+                <div class="col-md-3 d-flex flex-column">
+                    <OrderCart orderLines="state.currentOrderLines"
+                               total="state.currentTotal"
+                               selectedTable="state.selectedTable"
+                               onUpdateQty="updateCartQuantity"
+                               onSendOrder="sendOrderToKitchen"/>
+                </div>
+            </div>
+        </div>
+    </t>
+</templates>
