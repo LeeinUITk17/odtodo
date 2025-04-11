@@ -97,13 +97,13 @@
                   name="Reporting"
                   parent="menu_restaurant_root"
                   sequence="100"
-                  groups="restaurant_management.group_restaurant_cashier"/>
+                  groups="restaurant_management.group_restaurant_manager"/>
 
         <menuitem id="menu_restaurant_sale_report"
                   name="Sales Analysis"
                   parent="menu_restaurant_reporting_root"
                   action="action_restaurant_sale_report"
                   sequence="10"
-                  groups="restaurant_management.group_restaurant_cashier"/>
+                  groups="restaurant_management.group_restaurant_manager"/>
     </data>
 </odoo>
