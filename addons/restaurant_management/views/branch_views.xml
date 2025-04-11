@@ -63,6 +63,16 @@
                                      <span class="o_stat_text">Customers</span>
                                  </div>
                              </button>
+                             <button name="%(restaurant_management.action_restaurant_sale_report)d"
+                                     type="action"
+                                     class="oe_stat_button"
+                                     icon="fa-bar-chart"
+                                     context="{'search_default_branch_uuid': active_id, 'search_default_filter_paid': 1}"
+                                     help="View sales analysis for this branch (Paid Orders)">
+                                 <div class="o_stat_info">
+                                     <span class="o_stat_text">Sales Report</span>
+                                 </div>
+                             </button>
                         </div>
                     </header>
                     <sheet style="margin-top: 20px;">
@@ -223,6 +233,18 @@
                    sequence="10"
                    groups="restaurant_management.group_restaurant_manager"/>
          <!-- ====================================== -->
+         <menuitem id="menu_restaurant_reporting_root"
+                   name="Reporting"
+                   parent="menu_restaurant_root"
+                   sequence="100"
+                   groups="restaurant_management.group_restaurant_manager"/> 
+
+          <menuitem id="menu_restaurant_sale_report"
+                    name="Sales Analysis"
+                    parent="menu_restaurant_reporting_root"
+                    action="action_restaurant_sale_report"
+                    sequence="10"
+                    groups="restaurant_management.group_restaurant_manager"/> 
         
     </data>
 </odoo>

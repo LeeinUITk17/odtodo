@@ -20,7 +20,21 @@ class Order(models.Model):
     created_at = fields.Datetime(string='Created At', default=fields.Datetime.now, readonly=True)
     updated_at = fields.Datetime(string='Updated At', default=fields.Datetime.now, readonly=True)
     table_uuid = fields.Many2one('restaurant_management.table', string='Table', ondelete='set null', domain="[('branch_uuid', '=', branch_uuid)]")
-    branch_uuid = fields.Many2one('restaurant_management.branch', string='Branch', required=True, ondelete='cascade')
+    
+    @api.model
+    def _default_branch(self):
+        """Gets the branch assigned to the current user."""
+        return self.env.user.branch_id or False
+
+    branch_uuid = fields.Many2one(
+        'restaurant_management.branch',
+        string='Branch',
+        required=True,
+        ondelete='restrict', # Changed from cascade for safety
+        index=True,         # Added index=True for performance
+        default=_default_branch,
+        help="The branch where the order is placed. Automatically set for non-managers."
+    )
     customer_uuid = fields.Many2one('restaurant_management.customer', string='Customer', ondelete='set null')
     order_items = fields.One2many('restaurant_management.orderitem', 'order_uuid', string='Order Items')
     invoice_ids = fields.One2many('restaurant_management.invoice', 'order_uuid', string='Invoices', readonly=True)

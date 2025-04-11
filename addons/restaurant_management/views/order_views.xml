@@ -50,9 +50,19 @@
                         </div>
                         <group name="main_details">
                             <group>
-                                <field name="branch_uuid" options="{'no_create': True}"/>
-                                <field name="table_uuid" options="{'no_create': True}" context="{'branch_uuid': branch_uuid}" attrs="{'readonly': [('branch_uuid', '=', False)]}"/>
-                                <field name="customer_uuid" options="{'no_create_edit': False}" attrs="{'readonly': [('invoice_status', '=', 'paid')]}"/>
+                                <field name="branch_uuid" 
+                                       options="{'no_create': True}" 
+                                       force_save="1" 
+                                       attrs="{'readonly': [('id', '!=', False)]}" 
+                                       required="1"/>
+                                <field name="table_uuid" 
+                                       options="{'no_create': True}" 
+                                       domain="[('branch_uuid', '=', branch_uuid)]" 
+                                       attrs="{'readonly': [('branch_uuid', '=', False)]}" 
+                                       context="{'branch_uuid': branch_uuid}"/>
+                                <field name="customer_uuid" 
+                                       options="{'no_create_edit': False}" 
+                                       attrs="{'readonly': [('invoice_status', '=', 'paid')]}"/>
                             </group>
                             <group>
                                 <field name="created_at" readonly="1"/>
