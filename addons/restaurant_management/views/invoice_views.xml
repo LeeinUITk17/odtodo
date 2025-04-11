@@ -131,6 +131,6 @@
             </field>
         </record>
 
-        <menuitem id="menu_invoice" name="Invoices" parent="menu_restaurant_root" action="action_invoice" sequence="40" groups="restaurant_management.group_restaurant_cashier"/>
+        <menuitem id="menu_invoice" name="Invoices" parent="menu_restaurant_root" action="action_invoice" sequence="40" groups="restaurant_management.group_restaurant_waiter"/>
     </data>
 </odoo>

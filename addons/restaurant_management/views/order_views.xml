@@ -168,7 +168,7 @@
             <field name="res_model">restaurant_management.order</field>
             <field name="view_mode">tree,form</field>
             <field name="search_view_id" ref="view_order_search"/>
-            <field name="context">{'search_default_pending_orders': 1}</field>
+            <field name="context">{}</field>
             <field name="help" type="html">
                 <p class="o_view_nocontent_smiling_face">
                     Create a new restaurant order!

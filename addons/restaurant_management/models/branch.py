@@ -26,6 +26,13 @@ class Branch(models.Model):
     order_count = fields.Integer(compute='_compute_order_count', string="Order Count")
     invoice_count = fields.Integer(compute='_compute_invoice_count', string="Invoice Count")
 
+    @api.model
+    def _default_branch_for_manager(self):
+        if self.env.user.has_group('restaurant_management.group_restaurant_manager') and \
+           not self.env.user.has_group('restaurant_management.group_restaurant_admin'):
+            return self.env.user.branch_id or False
+        return False
+
     @api.depends('tables')
     def _compute_table_count(self):
         for branch in self:

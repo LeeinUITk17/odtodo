@@ -11,73 +11,48 @@
             <field name="name">Waiter</field>
             <field name="category_id" ref="module_category_restaurant_management"/>
             <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
-            <field name="comment">User can create/manage orders and customers.</field>
+            <field name="comment">User can create/manage orders and customers within their assigned branch.</field>
         </record>
 
         <record id="group_restaurant_cashier" model="res.groups">
             <field name="name">Cashier</field>
             <field name="category_id" ref="module_category_restaurant_management"/>
             <field name="implied_ids" eval="[(4, ref('group_restaurant_waiter'))]"/>
-            <field name="comment">User can manage reservations, orders, invoices, and customers.</field>
+            <field name="comment">User can manage reservations, orders, invoices, and customers within their assigned branch.</field>
         </record>
 
         <record id="group_restaurant_manager" model="res.groups">
-            <field name="name">Manager</field>
+            <field name="name">Branch Manager</field>
             <field name="category_id" ref="module_category_restaurant_management"/>
             <field name="implied_ids" eval="[(4, ref('group_restaurant_cashier'))]"/>
+            <field name="comment">User has full access within their assigned branch(es).</field>
+        </record>
+
+        <record id="group_restaurant_admin" model="res.groups">
+            <field name="name">Restaurant Administrator</field>
+            <field name="category_id" ref="module_category_restaurant_management"/>
+            <field name="implied_ids" eval="[(4, ref('group_restaurant_manager'))]"/>
             <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
-            <field name="comment">User has full access to all Restaurant features and configurations.</field>
+            <field name="comment">User has full access to ALL Restaurant features, configurations, and branches.</field>
         </record>
 
-        <record id="order_branch_rule_user" model="ir.rule">
-            <field name="name">Order: Branch User Access</field>
-            <field name="model_id" ref="model_restaurant_management_order"/>
-            <field name="domain_force">[('branch_uuid', 'in', user.branch_id.ids)]</field>
-            <field name="groups" eval="[(6, 0, [ref('group_restaurant_waiter'), ref('group_restaurant_cashier')])]"/>
-            <field name="global" eval="True"/>
-        </record>
-
-        <record id="order_branch_rule_manager" model="ir.rule">
-            <field name="name">Order: Manager Full Access</field>
-            <field name="model_id" ref="model_restaurant_management_order"/>
-            <field name="domain_force">[(1, '=', 1)]</field>
-            <field name="groups" eval="[(6, 0, [ref('group_restaurant_manager')])]"/>
-            <field name="global" eval="False"/>
-        </record>
-
-        <record id="reservation_branch_rule_user" model="ir.rule">
-            <field name="name">Reservation: Branch User Access</field>
-            <field name="model_id" ref="model_restaurant_management_reservation"/>
-            <field name="domain_force">[('branch_uuid', 'in', user.branch_id.ids)]</field>
-            <field name="groups" eval="[(6, 0, [ref('group_restaurant_waiter'), ref('group_restaurant_cashier')])]"/>
-            <field name="global" eval="True"/>
-        </record>
-
-        <record id="reservation_branch_rule_manager" model="ir.rule">
-            <field name="name">Reservation: Manager Full Access</field>
-            <field name="model_id" ref="model_restaurant_management_reservation"/>
-            <field name="domain_force">[(1, '=', 1)]</field>
-            <field name="groups" eval="[(6, 0, [ref('group_restaurant_manager')])]"/>
-            <field name="global" eval="False"/>
-        </record>
-
-        <record id="table_branch_rule_user" model="ir.rule">
-            <field name="name">Table: Branch User Access</field>
-            <field name="model_id" ref="model_restaurant_management_table"/>
-            <field name="domain_force">[('branch_uuid', 'in', user.branch_id.ids)]</field>
-            <field name="groups" eval="[(6, 0, [ref('base.group_user')])]"/>
+        <record id="branch_access_rule_branch_user" model="ir.rule">
+            <field name="name">Branch: Assigned Branch Access</field>
+            <field name="model_id" ref="model_restaurant_management_branch"/>
+            <field name="domain_force">[('id', 'in', user.branch_id.ids)]</field>
+            <field name="groups" eval="[(6, 0, [ref('group_restaurant_waiter'), ref('group_restaurant_cashier'), ref('group_restaurant_manager')])]"/>
             <field name="perm_read" eval="True"/>
-            <field name="perm_write" eval="False"/>
+            <field name="perm_write" eval="True"/>
             <field name="perm_create" eval="False"/>
             <field name="perm_unlink" eval="False"/>
             <field name="global" eval="True"/>
         </record>
 
-        <record id="table_branch_rule_manager" model="ir.rule">
-            <field name="name">Table: Manager Full Access</field>
-            <field name="model_id" ref="model_restaurant_management_table"/>
+        <record id="branch_access_rule_admin" model="ir.rule">
+            <field name="name">Branch: Admin Full Access</field>
+            <field name="model_id" ref="model_restaurant_management_branch"/>
             <field name="domain_force">[(1, '=', 1)]</field>
-            <field name="groups" eval="[(6, 0, [ref('group_restaurant_manager')])]"/>
+            <field name="groups" eval="[(6, 0, [ref('group_restaurant_admin')])]"/>
             <field name="perm_read" eval="True"/>
             <field name="perm_write" eval="True"/>
             <field name="perm_create" eval="True"/>
@@ -85,23 +60,23 @@
             <field name="global" eval="False"/>
         </record>
 
-        <record id="menuitem_branch_rule_user" model="ir.rule">
-            <field name="name">MenuItem: Branch User Access</field>
-            <field name="model_id" ref="model_restaurant_management_menuitem"/>
+        <record id="order_branch_rule_branch_user" model="ir.rule">
+            <field name="name">Order: Assigned Branch Access</field>
+            <field name="model_id" ref="model_restaurant_management_order"/>
             <field name="domain_force">[('branch_uuid', 'in', user.branch_id.ids)]</field>
-            <field name="groups" eval="[(6, 0, [ref('base.group_user')])]"/>
+            <field name="groups" eval="[(6, 0, [ref('group_restaurant_waiter'), ref('group_restaurant_cashier'), ref('group_restaurant_manager')])]"/>
             <field name="perm_read" eval="True"/>
-            <field name="perm_write" eval="False"/>
-            <field name="perm_create" eval="False"/>
-            <field name="perm_unlink" eval="False"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
             <field name="global" eval="True"/>
         </record>
 
-        <record id="menuitem_branch_rule_manager" model="ir.rule">
-            <field name="name">MenuItem: Manager Full Access</field>
-            <field name="model_id" ref="model_restaurant_management_menuitem"/>
+        <record id="order_branch_rule_admin" model="ir.rule">
+            <field name="name">Order: Admin Full Access</field>
+            <field name="model_id" ref="model_restaurant_management_order"/>
             <field name="domain_force">[(1, '=', 1)]</field>
-            <field name="groups" eval="[(6, 0, [ref('group_restaurant_manager')])]"/>
+            <field name="groups" eval="[(6, 0, [ref('group_restaurant_admin')])]"/>
             <field name="perm_read" eval="True"/>
             <field name="perm_write" eval="True"/>
             <field name="perm_create" eval="True"/>
@@ -109,19 +84,99 @@
             <field name="global" eval="False"/>
         </record>
 
-        <record id="invoice_branch_rule_user" model="ir.rule">
-            <field name="name">Invoice: Branch User Access</field>
-            <field name="model_id" ref="model_restaurant_management_invoice"/>
-            <field name="domain_force">[('order_uuid.branch_uuid', '=', user.branch_id.id)]</field>
-            <field name="groups" eval="[(6, 0, [ref('group_restaurant_waiter'), ref('group_restaurant_cashier')])]"/>
+        <record id="reservation_branch_rule_branch_user" model="ir.rule">
+            <field name="name">Reservation: Assigned Branch Access</field>
+            <field name="model_id" ref="model_restaurant_management_reservation"/>
+            <field name="domain_force">[('branch_uuid', 'in', user.branch_id.ids)]</field>
+            <field name="groups" eval="[(6, 0, [ref('group_restaurant_waiter'), ref('group_restaurant_cashier'), ref('group_restaurant_manager')])]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
             <field name="global" eval="True"/>
         </record>
 
-        <record id="invoice_branch_rule_manager" model="ir.rule">
-            <field name="name">Invoice: Manager Full Access</field>
+        <record id="reservation_branch_rule_admin" model="ir.rule">
+            <field name="name">Reservation: Admin Full Access</field>
+            <field name="model_id" ref="model_restaurant_management_reservation"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(6, 0, [ref('group_restaurant_admin')])]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+            <field name="global" eval="False"/>
+        </record>
+
+        <record id="table_branch_rule_branch_user" model="ir.rule">
+            <field name="name">Table: Assigned Branch Access</field>
+            <field name="model_id" ref="model_restaurant_management_table"/>
+            <field name="domain_force">[('branch_uuid', 'in', user.branch_id.ids)]</field>
+            <field name="groups" eval="[(6, 0, [ref('group_restaurant_waiter'), ref('group_restaurant_cashier'), ref('group_restaurant_manager')])]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+            <field name="global" eval="True"/>
+        </record>
+
+        <record id="table_branch_rule_admin" model="ir.rule">
+            <field name="name">Table: Admin Full Access</field>
+            <field name="model_id" ref="model_restaurant_management_table"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(6, 0, [ref('group_restaurant_admin')])]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+            <field name="global" eval="False"/>
+        </record>
+
+        <record id="menuitem_branch_rule_branch_user" model="ir.rule">
+            <field name="name">MenuItem: Assigned Branch Access</field>
+            <field name="model_id" ref="model_restaurant_management_menuitem"/>
+            <field name="domain_force">[('branch_uuid', 'in', user.branch_id.ids)]</field>
+            <field name="groups" eval="[(6, 0, [ref('group_restaurant_waiter'), ref('group_restaurant_cashier'), ref('group_restaurant_manager')])]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+            <field name="global" eval="True"/>
+        </record>
+
+        <record id="menuitem_branch_rule_admin" model="ir.rule">
+            <field name="name">MenuItem: Admin Full Access</field>
+            <field name="model_id" ref="model_restaurant_management_menuitem"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(6, 0, [ref('group_restaurant_admin')])]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+            <field name="global" eval="False"/>
+        </record>
+
+        <record id="invoice_branch_rule_branch_user" model="ir.rule">
+            <field name="name">Invoice: Assigned Branch Access</field>
+            <field name="model_id" ref="model_restaurant_management_invoice"/>
+            <field name="domain_force">[('order_uuid.branch_uuid', 'in', user.branch_id.ids)]</field>
+            <field name="groups" eval="[(6, 0, [ref('group_restaurant_waiter'), ref('group_restaurant_cashier'), ref('group_restaurant_manager')])]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+            <field name="global" eval="True"/>
+        </record>
+
+        <record id="invoice_branch_rule_admin" model="ir.rule">
+            <field name="name">Invoice: Admin Full Access</field>
             <field name="model_id" ref="model_restaurant_management_invoice"/>
             <field name="domain_force">[(1, '=', 1)]</field>
-            <field name="groups" eval="[(6, 0, [ref('group_restaurant_manager')])]"/>
+            <field name="groups" eval="[(6, 0, [ref('group_restaurant_admin')])]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
             <field name="global" eval="False"/>
         </record>
     </data>
