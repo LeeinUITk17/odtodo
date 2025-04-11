@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_restaurant_sale_report_search" model="ir.ui.view">
+            <field name="name">restaurant.management.sale.report.search</field>
+            <field name="model">restaurant_management.order</field>
+            <field name="arch" type="xml">
+                <search string="Search Sales Analysis">
+                    <field name="name" string="Order Reference"/>
+                    <field name="branch_uuid"/>
+                    <field name="customer_uuid"/>
+                    <field name="table_uuid"/>
+                    <field name="created_at" string="Order Date"/>
+                    <separator/>
+                    <filter string="Paid Orders" name="filter_paid" domain="[('invoice_status', '=', 'paid')]"/>
+                    <separator/>
+                    <filter string="Order Date" name="filter_order_date" date="created_at"/>
+                    <separator/>
+                    <group expand="1" string="Group By">
+                        <filter string="Branch" name="group_by_branch" context="{'group_by': 'branch_uuid'}"/>
+                        <filter string="Customer" name="group_by_customer" context="{'group_by': 'customer_uuid'}"/>
+                        <filter string="Table" name="group_by_table" context="{'group_by': 'table_uuid'}"/>
+                        <filter string="Status" name="group_by_status" context="{'group_by': 'status'}"/>
+                        <filter string="Invoice Status" name="group_by_invoice_status" context="{'group_by': 'invoice_status'}"/>
+                        <filter string="Order Date" name="group_by_date" context="{'group_by': 'created_at:day'}"/>
+                        <filter string="Order Week" name="group_by_week" context="{'group_by': 'created_at:week'}"/>
+                        <filter string="Order Month" name="group_by_month" context="{'group_by': 'created_at:month'}"/>
+                        <filter string="Order Year" name="group_by_year" context="{'group_by': 'created_at:year'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record id="view_restaurant_sale_report_pivot" model="ir.ui.view">
+            <field name="name">restaurant.management.sale.report.pivot</field>
+            <field name="model">restaurant_management.order</field>
+            <field name="arch" type="xml">
+                <pivot string="Sales Analysis" disable_linking="True">
+                    <field name="branch_uuid" type="row"/>
+                    <field name="created_at" interval="month" type="col"/>
+                    <field name="total_price" type="measure"/>
+                </pivot>
+            </field>
+        </record>
+
+        <record id="view_restaurant_sale_report_graph" model="ir.ui.view">
+            <field name="name">restaurant.management.sale.report.graph</field>
+            <field name="model">restaurant_management.order</field>
+            <field name="arch" type="xml">
+                <graph string="Sales Analysis" type="bar">
+                    <field name="branch_uuid" type="row"/>
+                    <field name="created_at" interval="month" type="row"/>
+                    <field name="total_price" type="measure"/>
+                </graph>
+            </field>
+        </record>
+
+        <record id="view_restaurant_sale_report_tree" model="ir.ui.view">
+            <field name="name">restaurant.management.sale.report.tree</field>
+            <field name="model">restaurant_management.order</field>
+            <field name="arch" type="xml">
+                <tree string="Sale Report Data">
+                    <field name="name" string="Order Ref"/>
+                    <field name="branch_uuid"/>
+                    <field name="created_at" string="Order Date"/>
+                    <field name="customer_uuid" optional="show"/>
+                    <field name="table_uuid" optional="show"/>
+                    <field name="total_price" sum="Total Amount" widget="monetary"/>
+                    <field name="status" optional="show"/>
+                    <field name="invoice_status" widget="badge" decoration-success="invoice_status == 'paid'" decoration-info="invoice_status == 'invoiced'" decoration-warning="invoice_status == 'to_invoice'"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="action_restaurant_sale_report" model="ir.actions.act_window">
+            <field name="name">Sale Report</field>
+            <field name="res_model">restaurant_management.order</field>
+            <field name="view_mode">pivot,graph,tree</field>
+            <field name="search_view_id" ref="view_restaurant_sale_report_search"/>
+            <field name="domain">[('invoice_status', '=', 'paid')]</field>
+            <field name="context">{
+                'search_default_group_by_branch': 1,
+                'search_default_filter_order_date': 1,
+                'search_default_filter_paid': 1
+            }</field>
+            <field name="help" type="html">
+              <p class="o_view_nocontent_smiling_face">
+                No sales data found yet!
+              </p>
+              <p>
+                This report analyzes confirmed sales orders. Use the filters and grouping options to explore your sales performance by branch, date, customer, etc.
+              </p>
+            </field>
+        </record>
+
+        <menuitem id="menu_restaurant_reporting_root"
+                  name="Reporting"
+                  parent="menu_restaurant_root"
+                  sequence="100"
+                  groups="restaurant_management.group_restaurant_cashier"/>
+
+        <menuitem id="menu_restaurant_sale_report"
+                  name="Sales Analysis"
+                  parent="menu_restaurant_reporting_root"
+                  action="action_restaurant_sale_report"
+                  sequence="10"
+                  groups="restaurant_management.group_restaurant_cashier"/>
+    </data>
+</odoo>

@@ -36,10 +36,19 @@
                                 <field name="customer_uuid" string="Customer (Name/Phone)" placeholder="Search or Create Customer..." options="{'no_create_edit': False, 'no_quick_create': False, 'no_open': False}" context="{'search_default_customer':1}" required="1"/>
                                 <field name="name" string="Customer Name (Auto)" readonly="1" force_save="1" optional="hide"/>
                                 <field name="phone" readonly="1" force_save="1" optional="hide"/>
-                                <field name="table_uuid" options="{'no_create': True}" context="{'branch_uuid': branch_uuid}" domain="[('branch_uuid', '=', branch_uuid)]" required="1"/>
+                                <field name="table_uuid"
+                                       options="{'no_create': True}"
+                                       context="{'branch_uuid': branch_uuid}"
+                                       domain="[('branch_uuid', '=', branch_uuid)]"
+                                       required="1"
+                                       attrs="{'readonly': ['|', ('branch_uuid', '=', False), ('id', '!=', False)]}" />
                             </group>
                             <group>
-                                <field name="branch_uuid" options="{'no_create': True}" required="1"/>
+                                <field name="branch_uuid"
+                                       options="{'no_create': True}"
+                                       required="1"
+                                       attrs="{'readonly': [('branch_uuid', '!=', False)]}"
+                                       force_save="1" />
                                 <field name="reservation_date" required="1"/>
                             </group>
                         </group>

@@ -16,8 +16,28 @@ class Reservation(models.Model):
     )
     name = fields.Char(string='Customer Name', related='customer_uuid.name', store=True, readonly=False)
     phone = fields.Char(string='Phone Number', related='customer_uuid.phone', store=True, readonly=False)
-    branch_uuid = fields.Many2one('restaurant_management.branch', string='Branch', required=True, ondelete='cascade', index=True)
-    table_uuid = fields.Many2one('restaurant_management.table', string='Table', required=True, ondelete='cascade', index=True)
+    
+    @api.model
+    def _default_branch(self):
+        """Gets the branch assigned to the current user."""
+        return self.env.user.branch_id or False
+
+    branch_uuid = fields.Many2one(
+        'restaurant_management.branch',
+        string='Branch',
+        required=True,
+        ondelete='restrict', 
+        index=True,          
+        default=_default_branch 
+    )
+    table_uuid = fields.Many2one(
+        'restaurant_management.table',
+        string='Table',
+        required=True,
+        ondelete='restrict', 
+        index=True,
+        domain="[('branch_uuid', '=', branch_uuid)]" 
+    )
     reservation_date = fields.Datetime(string='Reservation Date', required=True, index=True)
     status = fields.Selection([
         ('pending', 'Pending'),
