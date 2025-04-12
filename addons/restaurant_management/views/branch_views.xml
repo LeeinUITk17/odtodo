@@ -18,7 +18,7 @@
             </field>
         </record>
 
-        <record id="view_branch_form" model="ir.ui.view">
+        <!-- <record id="view_branch_form" model="ir.ui.view">
             <field name="name">restaurant.management.branch.form</field>
             <field name="model">restaurant_management.branch</field>
             <field name="arch" type="xml">
@@ -27,13 +27,11 @@
                         <div class="oe_button_box" name="button_box">
                             <button name="action_view_tables" type="object" class="oe_stat_button" icon="fa-cutlery">
                                 <div class="o_stat_info">
-                                    <!-- <field name="table_count" widget="statinfo" nolabel="1"/> -->
                                     <span class="o_stat_text">Tables</span>
                                 </div>
                             </button>
                             <button name="action_view_menu_items" type="object" class="oe_stat_button" icon="fa-list-alt">
                                 <div class="o_stat_info">
-                                    <!-- <field name="menu_item_count" widget="statinfo" nolabel="1"/> -->
                                     <span class="o_stat_text">Menu Items</span>
                                 </div>
                             </button>
@@ -49,7 +47,6 @@
                             </button>
                             <button name="action_view_orders" type="object" class="oe_stat_button" icon="fa-shopping-cart">
                                 <div class="o_stat_info">
-                                    <!-- <field name="order_count" widget="statinfo" nolabel="1"/> -->
                                     <span class="o_stat_text">Orders</span>
                                 </div>
                             </button>
@@ -168,23 +165,8 @@
                     </sheet>
                 </form>
             </field>
-        </record>
+        </record> -->
 
-        <record id="view_branch_form_inherit_reservation" model="ir.ui.view">
-            <field name="name">restaurant.management.branch.form.inherit.reservation</field>
-            <field name="model">restaurant_management.branch</field>
-            <field name="inherit_id" ref="restaurant_management.view_branch_form"/>
-            <!-- <field name="arch" type="xml">
-                <xpath expr="//div[@name='button_box']" position="inside">
-                    <button name="action_view_reservations"
-                            type="object"
-                            class="oe_stat_button"
-                            icon="fa-calendar-check-o"
-                            help="View reservations for this branch">
-                    </button>
-                </xpath>
-            </field> -->
-        </record>
 
         <record id="view_branch_search" model="ir.ui.view">
             <field name="name">restaurant.management.branch.search</field>
@@ -215,7 +197,7 @@
             </field>
         </record>
 
-       <menuitem id="menu_restaurant_root" name="Restaurant" sequence="10" web_icon="restaurant_management,static/description/icon.png" groups="restaurant_management.group_restaurant_waiter"/>
+       <!-- <menuitem id="menu_restaurant_root" name="Restaurant" sequence="10" web_icon="restaurant_management,static/description/icon.png" groups="restaurant_management.group_restaurant_waiter"/> -->
 
          <!-- ===== SỬA LẠI PHẦN MENU ITEMS NÀY ===== -->
          <!-- Định nghĩa menu Config (chỉ Manager thấy) -->

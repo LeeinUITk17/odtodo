@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <menuitem id="menu_restaurant_root"
+                  name="Restaurant"
+                  sequence="10"
+                  web_icon="restaurant_management,static/description/icon.png"
+                  groups="restaurant_management.group_restaurant_waiter"/>
+    </data>
+</odoo>
