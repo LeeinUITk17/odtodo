@@ -15,19 +15,23 @@
     'data': [
         'security/restaurant_management_security.xml',
         'security/ir.model.access.csv',
+
         'data/ir_sequence_data.xml',
-        'views/category_views.xml',
-        'views/customer_views.xml',
+        'views/menus.xml',  
+        'wizard/add_menu_item_wizard_views.xml',
+
         'views/res_users_views.xml',
+        'views/sale_report_views.xml',
+        'views/branch_views.xml',     
+        'views/category_views.xml',   
+        'views/customer_views.xml',
         'views/menu_item_views.xml',
         'views/table_views.xml',
-        'views/sale_report_views.xml',
-        'views/branch_views.xml',
+
         'views/order_views.xml',
         'views/reservation_views.xml',
         'views/invoice_views.xml',
-        # 'views/waiter_order_views.xml',
-        'wizard/add_menu_item_wizard_views.xml',
+
     ],
     'assets': {
         'web.assets_backend': [

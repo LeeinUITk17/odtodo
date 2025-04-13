@@ -25,3 +25,8 @@ class Table(models.Model):
     order_uuids = fields.One2many('restaurant_management.order', 'table_uuid', string="Orders")
     created_at = fields.Datetime(string="Created At", default=fields.Datetime.now, readonly=True)
     updated_at = fields.Datetime(string="Updated At", default=fields.Datetime.now, readonly=True)
+
+    def is_available(self):
+        self.ensure_one()
+        pending_orders = self.order_uuids.filtered(lambda o: o.status == 'PENDING')
+        return not pending_orders

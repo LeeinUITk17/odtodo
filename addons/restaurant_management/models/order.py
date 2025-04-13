@@ -1,6 +1,8 @@
 from odoo import models, fields, api, _
-from odoo.exceptions import UserError
+from odoo.exceptions import UserError, ValidationError
 import uuid
+import logging
+_logger = logging.getLogger(__name__)
 
 class Order(models.Model):
     _name = 'restaurant_management.order'
@@ -19,7 +21,7 @@ class Order(models.Model):
     total_price = fields.Monetary(string='Total Price', compute='_compute_total_price', store=True, currency_field='currency_id')
     created_at = fields.Datetime(string='Created At', default=fields.Datetime.now, readonly=True)
     updated_at = fields.Datetime(string='Updated At', default=fields.Datetime.now, readonly=True)
-    table_uuid = fields.Many2one('restaurant_management.table', string='Table', ondelete='set null', domain="[('branch_uuid', '=', branch_uuid)]")
+    table_uuid = fields.Many2one('restaurant_management.table', string='Table', ondelete='set null', domain="[('branch_uuid', '=', branch_uuid), ('status', '=', 'available')]")
     
     @api.model
     def _default_branch(self):
@@ -114,18 +116,108 @@ class Order(models.Model):
         for order in self:
             order.invoice_count = len(order.invoice_ids)
 
+    def _occupy_table(self, table):
+        if table and table.status == 'available':
+            try:
+                table.sudo().write({'status': 'occupied'})
+                _logger.info(f"Order {self.name}: Occupied table {table.name}")
+            except Exception as e:
+                _logger.error(f"Failed to occupy table {table.name} for order {self.name}: {e}")
+        elif table and table.status != 'available':
+            _logger.warning(f"Order {self.name}: Tried to occupy table {table.name} which is already {table.status}")
+            raise ValidationError(_("Table '%s' is no longer available (%s). Please choose another table.") % (table.name, table.status))
+
+    def _release_table_if_possible(self, table):
+        if not table:
+            return
+        other_pending_orders = self.env['restaurant_management.order'].sudo().search_count([
+            ('table_uuid', '=', table.id),
+            ('status', '=', 'PENDING'),
+            ('id', '!=', self.id)
+        ])
+        _logger.debug(f"Checking table {table.name} for release. Order: {self.name}. Other pending orders: {other_pending_orders}")
+        if other_pending_orders == 0 and table.sudo().status == 'occupied':
+            try:
+                table.sudo().write({'status': 'available'})
+                _logger.info(f"Order {self.name}: Released table {table.name}")
+            except Exception as e:
+                _logger.error(f"Failed to release table {table.name} from order {self.name}: {e}")
+        else:
+            _logger.info(f"Order {self.name}: Table {table.name} not released, {other_pending_orders} other pending orders exist.")
+
     @api.model_create_multi
     def create(self, vals_list):
         for vals in vals_list:
             if vals.get('name', _('New')) == _('New'):
                 vals['name'] = self.env['ir.sequence'].next_by_code('restaurant.order.sequence') or _('New')
-        return super(Order, self).create(vals_list)
+        orders = super(Order, self).create(vals_list)
+        for order in orders:
+            if order.table_uuid and order.status == 'PENDING':
+                order._occupy_table(order.table_uuid)
+        return orders
 
     def write(self, vals):
+        tables_to_release = self.env['restaurant_management.table']
+        tables_to_occupy = self.env['restaurant_management.table']
+        orders_being_reset = self.env['restaurant_management.order']
+
+        if 'status' in vals or 'table_uuid' in vals:
+            for order in self:
+                old_table = order.table_uuid
+                old_status = order.status
+                new_status = vals.get('status', old_status)
+                new_table_id = vals.get('table_uuid', old_table.id if old_table else False)
+                new_table = self.env['restaurant_management.table'].browse(new_table_id) if new_table_id else False
+
+                if old_status == 'PENDING' and old_table and ('table_uuid' in vals and old_table != new_table):
+                    tables_to_release |= old_table
+
+                if new_status in ('COMPLETED', 'CANCELED') and old_status == 'PENDING' and old_table:
+                    tables_to_release |= old_table
+
+                if new_status == 'PENDING' and old_status in ('COMPLETED', 'CANCELED'):
+                    if new_table:
+                        tables_to_occupy |= new_table
+                    orders_being_reset |= order
+
+                if new_status == 'PENDING' and new_table and ('table_uuid' in vals and old_table != new_table):
+                    tables_to_occupy |= new_table
+
         if any(f in vals for f in vals if f != 'updated_at'):
             vals['updated_at'] = fields.Datetime.now()
-        return super(Order, self).write(vals)
 
+        res = super(Order, self).write(vals)
+
+        if res:
+            for table in tables_to_release:
+                orders_on_this_table = self.filtered(lambda o: o.table_uuid.id == table.id)
+                if not any(o.status == 'PENDING' for o in orders_on_this_table):
+                    self._release_table_if_possible(table)
+
+            for table in tables_to_occupy:
+                order_occupying = self.filtered(lambda o: o.table_uuid.id == table.id and o.status == 'PENDING')
+                if order_occupying:
+                    order_occupying[-1]._occupy_table(table)
+
+        return res
+
+    def unlink(self):
+        tables_to_potentially_release = self.mapped('table_uuid')
+        res = super(Order, self).unlink()
+        OrderEnv = self.env['restaurant_management.order'].sudo()
+        for table in tables_to_potentially_release:
+            if table.exists() and table.status == 'occupied':
+                other_pending_orders = OrderEnv.search_count([
+                    ('table_uuid', '=', table.id),
+                    ('status', '=', 'PENDING'),
+                ])
+                if other_pending_orders == 0:
+                    try:
+                        table.sudo().write({'status': 'available'})
+                        _logger.info(f"Order deletion: Released table {table.name}")
+                    except Exception as e:
+                        _logger.error(f"Failed to release table {table.name} after order deletion: {e}")
+        return res
     def action_complete(self):
         allowed_statuses = ['PENDING']
         if any(rec.status not in allowed_statuses for rec in self):

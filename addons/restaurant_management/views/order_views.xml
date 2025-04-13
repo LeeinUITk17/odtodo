@@ -57,7 +57,7 @@
                                        required="1"/>
                                 <field name="table_uuid" 
                                        options="{'no_create': True}" 
-                                       domain="[('branch_uuid', '=', branch_uuid)]" 
+                                       domain="[('branch_uuid', '=', branch_uuid), ('status', '=', 'available')]" 
                                        attrs="{'readonly': [('branch_uuid', '=', False)]}" 
                                        context="{'branch_uuid': branch_uuid}"/>
                                 <field name="customer_uuid" 
