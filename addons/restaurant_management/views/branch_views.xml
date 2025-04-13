@@ -18,64 +18,41 @@
             </field>
         </record>
 
-        <!-- <record id="view_branch_form" model="ir.ui.view">
+<record id="view_branch_form" model="ir.ui.view">
             <field name="name">restaurant.management.branch.form</field>
             <field name="model">restaurant_management.branch</field>
             <field name="arch" type="xml">
                 <form string="Branch">
-                    <header style="margin-top: 20px;">
+                    <sheet>
                         <div class="oe_button_box" name="button_box">
                             <button name="action_view_tables" type="object" class="oe_stat_button" icon="fa-cutlery">
-                                <div class="o_stat_info">
-                                    <span class="o_stat_text">Tables</span>
-                                </div>
+                                <field name="table_count" widget="statinfo" string="Tables"/>
                             </button>
                             <button name="action_view_menu_items" type="object" class="oe_stat_button" icon="fa-list-alt">
-                                <div class="o_stat_info">
-                                    <span class="o_stat_text">Menu Items</span>
-                                </div>
+                                <field name="menu_item_count" widget="statinfo" string="Menu Items"/>
                             </button>
                             <button name="action_view_categories" type="object" class="oe_stat_button" icon="fa-tags">
-                                <div class="o_stat_info">
-                                    <span class="o_stat_text">Categories</span>
-                                </div>
+                                <div class="o_stat_info"><span class="o_stat_text">Categories</span></div>
                             </button>
                             <button name="action_view_reservations" type="object" class="oe_stat_button" icon="fa-calendar-check-o">
-                                <div class="o_stat_info">
-                                    <span class="o_stat_text">Reservations</span>
-                                </div>
+                                <field name="reservation_count" widget="statinfo" string="Reservations"/>
                             </button>
                             <button name="action_view_orders" type="object" class="oe_stat_button" icon="fa-shopping-cart">
-                                <div class="o_stat_info">
-                                    <span class="o_stat_text">Orders</span>
-                                </div>
+                                <field name="order_count" widget="statinfo" string="Orders"/>
                             </button>
                             <button name="action_view_invoices" type="object" class="oe_stat_button" icon="fa-file-text-o">
-                                <div class="o_stat_info">
-                                    <span class="o_stat_text">Invoices</span>
-                                </div>
+                                <field name="invoice_count" widget="statinfo" string="Invoices"/>
                             </button>
-                             <button name="action_view_customers" type="object" class="oe_stat_button" icon="fa-users">
-                                 <div class="o_stat_info">
-                                     <span class="o_stat_text">Customers</span>
-                                 </div>
-                             </button>
-                             <button name="%(restaurant_management.action_restaurant_sale_report)d"
-                                     type="action"
-                                     class="oe_stat_button"
-                                     icon="fa-bar-chart"
-                                     context="{'search_default_branch_uuid': active_id, 'search_default_filter_paid': 1}"
-                                     help="View sales analysis for this branch (Paid Orders)">
-                                 <div class="o_stat_info">
-                                     <span class="o_stat_text">Sales Report</span>
-                                 </div>
-                             </button>
+                            <button name="action_view_customers" type="object" class="oe_stat_button" icon="fa-users">
+                                <field name="customer_count" widget="statinfo" string="Customers"/>
+                            </button>
+                            <button name="%(restaurant_management.action_restaurant_sale_report)d" type="action" class="oe_stat_button" icon="fa-bar-chart" context="{'search_default_branch_uuid': active_id, 'search_default_filter_paid': 1}" help="View sales analysis for this branch (Paid Orders)">
+                                <div class="o_stat_info"><span class="o_stat_text">Sales Report</span></div>
+                            </button>
                         </div>
-                    </header>
-                    <sheet style="margin-top: 20px;">
                         <widget name="web_ribbon" title="Archived" bg_color="bg-danger" attrs="{'invisible': [('active', '=', True)]}"/>
                         <group name="main_info">
-                            <group>
+                           <group>
                                 <field name="name" placeholder="e.g., Downtown Branch"/>
                                 <field name="location" placeholder="e.g., 123 Main St, Anytown"/>
                                 <field name="active" invisible="1"/>
@@ -87,85 +64,15 @@
                             </group>
                         </group>
                         <notebook>
-                            <page string="Tables" name="tables">
-                                <field name="tables" readonly="1">
-                                    <tree>
-                                        <field name="name"/>
-                                        <field name="area"/>
-                                        <field name="capacity"/>
-                                        <field name="status"/>
-                                    </tree>
-                                    <form>
-                                        <group>
-                                            <field name="name"/>
-                                            <field name="area"/>
-                                            <field name="capacity"/>
-                                            <field name="status"/>
-                                        </group>
-                                    </form>
-                                </field>
-                            </page>
-                            <page string="Menu Items" name="menu_items">
-                                <field name="menu_items" context="{'default_branch_uuid': active_id}">
-                                    <tree editable="bottom">
-                                        <field name="name"/>
-                                        <field name="category_uuid"/>
-                                        <field name="price"/>
-                                    </tree>
-                                    <form>
-                                        <group>
-                                            <field name="name"/>
-                                            <field name="category_uuid"/>
-                                            <field name="branch_uuid"/>
-                                            <field name="price"/>
-                                            <field name="description"/>
-                                        </group>
-                                    </form>
-                                </field>
-                            </page>
-                            <page string="Reservations" name="reservations">
-                                <field name="reservations" readonly="1">
-                                    <tree>
-                                        <field name="name" string="Customer Name"/>
-                                        <field name="phone" optional="show"/>
-                                        <field name="table_uuid"/>
-                                        <field name="reservation_date"/>
-                                        <field name="status"/>
-                                    </tree>
-                                    <form>
-                                        <group>
-                                            <field name="name" string="Customer Name"/>
-                                            <field name="phone"/>
-                                            <field name="table_uuid"/>
-                                            <field name="reservation_date"/>
-                                            <field name="status"/>
-                                        </group>
-                                    </form>
-                                </field>
-                            </page>
-                            <page string="Orders" name="orders">
-                                <field name="orders" readonly="1">
-                                    <tree>
-                                        <field name="table_uuid"/>
-                                        <field name="status"/>
-                                        <field name="total_price"/>
-                                        <field name="created_at"/>
-                                    </tree>
-                                    <form>
-                                        <group>
-                                            <field name="table_uuid"/>
-                                            <field name="status"/>
-                                            <field name="total_price"/>
-                                            <field name="created_at"/>
-                                        </group>
-                                    </form>
-                                </field>
-                            </page>
+                           <page string="Tables" name="tables"><field name="tables" context="{'default_branch_uuid': active_id}" editable="bottom"><tree><field name="name"/><field name="area"/><field name="capacity"/><field name="status"/><field name="active" widget="boolean_toggle"/></tree></field></page>
+                            <page string="Menu Items" name="menu_items"><field name="menu_items" context="{'default_branch_uuid': active_id}" editable="bottom"><tree><field name="name"/><field name="category_uuid"/><field name="price"/><field name="active" widget="boolean_toggle"/></tree></field></page>
+                            <page string="Reservations" name="reservations"><field name="reservations" readonly="1" context="{'default_branch_uuid': active_id}"><tree><field name="customer_uuid"/><field name="phone" optional="show"/><field name="table_uuid"/><field name="reservation_date"/><field name="status"/></tree></field></page>
+                            <page string="Orders" name="orders"><field name="orders" readonly="1" context="{'default_branch_uuid': active_id}"><tree><field name="name"/><field name="table_uuid" optional="show"/><field name="status"/><field name="total_price"/><field name="created_at"/></tree></field></page>
                         </notebook>
                     </sheet>
                 </form>
             </field>
-        </record> -->
+        </record>
 
 
         <record id="view_branch_search" model="ir.ui.view">
