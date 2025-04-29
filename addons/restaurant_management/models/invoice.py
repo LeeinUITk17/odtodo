@@ -71,11 +71,37 @@ class Invoice(models.Model):
             invoice.total_price = subtotal
             invoice.tax = calculated_tax
             invoice.grand_total = subtotal + calculated_tax
-
     def write(self, vals):
-        if any(f in vals for f in vals if f != 'updated_at'):
+        old_statuses = {rec.id: rec.status for rec in self}
+        res = super(Invoice, self).write(vals)
+        if 'status' in vals:
+            for invoice in self:
+                 # Chỉ tạo log nếu status thực sự thay đổi và có customer
+                if invoice.customer_uuid and vals['status'] != old_statuses.get(invoice.id):
+                    log_type = False
+                    content = False
+                    # Khi chuyển sang Paid
+                    if vals['status'] == 'paid' and old_statuses.get(invoice.id) != 'paid':
+                        log_type = 'payment_paid'
+                        content = _("Invoice marked as Paid. Amount: %s %s.") % (
+                            invoice.grand_total,
+                            invoice.currency_id.symbol or invoice.currency_id.name
+                        )
+                    # Khi chuyển sang Cancelled (từ trạng thái không phải cancelled)
+                    elif vals['status'] == 'cancelled' and old_statuses.get(invoice.id) != 'cancelled':
+                        log_type = 'payment_cancelled'
+                        content = _("Invoice Cancelled.")
+
+                    if log_type and content:
+                        self.env['restaurant_management.customer.log']._create_log(
+                            customer=invoice.customer_uuid,
+                            log_type=log_type,
+                            content=content,
+                            invoice=invoice,
+                            branch=invoice.order_uuid.branch_uuid if invoice.order_uuid else None # Lấy branch qua order
+                        )
             vals['updated_at'] = fields.Datetime.now()
-        return super(Invoice, self).write(vals)
+        return res
 
     def action_post(self):
         if not self.details:

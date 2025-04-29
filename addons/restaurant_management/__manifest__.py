@@ -31,6 +31,7 @@
         'views/order_views.xml',
         'views/reservation_views.xml',
         'views/invoice_views.xml',
+        'views/customer_log_views.xml',
 
     ],
     'assets': {

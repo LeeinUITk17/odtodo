@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Tree View -->
+        <record id="view_customer_log_tree" model="ir.ui.view">
+            <field name="name">restaurant.management.customer.log.tree</field>
+            <field name="model">restaurant_management.customer.log</field>
+            <field name="arch" type="xml">
+                <tree string="Customer Activity Logs" create="false" edit="false" delete="false"> <!-- Thường log chỉ đọc -->
+                    <!-- Sử dụng create_date chuẩn -->
+                    <field name="create_date" string="Timestamp"/>
+                    <field name="customer_id"/>
+                    <field name="log_type"/>
+                    <field name="content"/>
+                    <field name="user_id" optional="show"/>
+                    <field name="branch_id" optional="show"/>
+                    <field name="reservation_id" optional="hide"/>
+                    <field name="invoice_id" optional="hide"/>
+                    <field name="order_id" optional="hide"/>
+                    <field name="uuid" optional="hide"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- Form View (Readonly) -->
+        <record id="view_customer_log_form" model="ir.ui.view">
+            <field name="name">restaurant.management.customer.log.form</field>
+            <field name="model">restaurant_management.customer.log</field>
+            <field name="arch" type="xml">
+                <form string="Customer Log Entry" create="false" edit="false" delete="false">
+                     <sheet>
+                        <group>
+                            <group>
+                                <field name="customer_id" options="{'no_open': True}"/>
+                                <field name="log_type"/>
+                                <!-- Sử dụng create_date chuẩn -->
+                                <field name="create_date" string="Timestamp"/>
+                                <field name="user_id" options="{'no_open': True}"/>
+                            </group>
+                             <group>
+                                <field name="branch_id" options="{'no_open': True}"/>
+                                <field name="reservation_id" attrs="{'invisible': [('reservation_id', '=', False)]}" options="{'no_open': True}"/>
+                                <field name="invoice_id" attrs="{'invisible': [('invoice_id', '=', False)]}" options="{'no_open': True}"/>
+                                <field name="order_id" attrs="{'invisible': [('order_id', '=', False)]}" options="{'no_open': True}"/>
+                                <field name="uuid"/>
+                            </group>
+                        </group>
+                         <group string="Details">
+                             <field name="content" nolabel="1"/>
+                         </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+         <!-- Search View -->
+        <record id="view_customer_log_search" model="ir.ui.view">
+            <field name="name">restaurant.management.customer.log.search</field>
+            <field name="model">restaurant_management.customer.log</field>
+            <field name="arch" type="xml">
+                <search string="Search Customer Logs">
+                    <field name="customer_id"/>
+                    <field name="log_type"/>
+                    <field name="content" string="Details"/>
+                    <field name="user_id"/>
+                    <field name="branch_id"/>
+                    <field name="reservation_id"/>
+                    <field name="invoice_id"/>
+                    <field name="order_id"/>
+                    <separator/>
+                    <filter string="Reservations" name="filter_reservation" domain="[('log_type', 'like', 'reservation%')]"/>
+                    <filter string="Payments" name="filter_payment" domain="[('log_type', 'like', 'payment%')]"/>
+                    <separator/>
+                    <filter string="Date" name="filter_date" date="create_date"/>
+                    <separator/>
+                    <group expand="1" string="Group By">
+                        <filter string="Customer" name="group_by_customer" context="{'group_by': 'customer_id'}"/>
+                        <filter string="Log Type" name="group_by_log_type" context="{'group_by': 'log_type'}"/>
+                        <filter string="User" name="group_by_user" context="{'group_by': 'user_id'}"/>
+                        <filter string="Branch" name="group_by_branch" context="{'group_by': 'branch_id'}"/>
+                        <filter string="Date" name="group_by_date" context="{'group_by': 'create_date:day'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <!-- Action Window -->
+        <record id="action_customer_log" model="ir.actions.act_window">
+            <field name="name">Customer Activity Logs</field>
+            <field name="res_model">restaurant_management.customer.log</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="view_customer_log_search"/>
+            <!-- Không nên cho tạo log thủ công -->
+            <field name="context">{'create': False, 'edit': False, 'delete': False}</field>
+            <field name="help" type="html">
+              <p class="o_view_nocontent_smiling_face">
+                No customer activity logs found yet.
+              </p><p>
+                Logs are automatically created when customers make reservations or payments.
+              </p>
+            </field>
+        </record>
+
+        <!-- Menu Item (Ví dụ đặt dưới Configuration, chỉ Admin/Manager thấy) -->
+        <menuitem id="menu_customer_log"
+                  name="Customer Logs"
+                  parent="menu_restaurant_config" 
+                  action="action_customer_log"
+                  sequence="90"
+                  groups="restaurant_management.group_restaurant_manager"/> <!-- Hoặc group_restaurant_admin -->
+
+    </data>
+</odoo>
