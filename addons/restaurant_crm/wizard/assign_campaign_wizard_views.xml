@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_assign_campaign_wizard_form" model="ir.ui.view">
+            <field name="name">assign.campaign.wizard.form</field>
+            <field name="model">restaurant_crm.assign_campaign_wizard</field>
+            <field name="arch" type="xml">
+                <form string="Assign Campaign to Members">
+                    <group>
+                        <field name="campaign_id" readonly="1" force_save="1" options="{'no_open': True}"/>
+                        <field name="campaign_name"/>
+                        <field name="promotion_pool_id" readonly="1" force_save="1"
+                               attrs="{'invisible': [('promotion_pool_id', '=', False)]}"/>
+                    </group>
+                    <separator string="Select Members By Criteria"/>
+                    <group>
+                        <group>
+                            <field name="target_tier_ids" widget="many2many_tags"
+                                   options="{'no_create': True, 'no_create_edit': True}"
+                                   placeholder="Select Tiers (optional)..."/>
+                        </group>
+                        <group>
+                            <field name="target_status" required="1"/>
+                        </group>
+                    </group>
+                    <separator string="Or Select Members Manually"/>
+                    <field name="target_membership_ids" nolabel="1"
+                           placeholder="Select individual members (optional)..."
+                           options="{'no_create': True, 'no_create_edit': True}"
+                           domain="[('status', '=', target_status)]">
+                        <tree>
+                            <field name="customer_name"/>
+                            <field name="tier_id"/>
+                            <field name="status"/>
+                        </tree>
+                    </field>
+                    <separator string="Promotion Code Assignment"/>
+                    <group attrs="{'invisible': [('promotion_pool_id', '=', False)]}">
+                        <field name="assign_existing_promo_code" nolabel="1"/>
+                        <span class="text-muted" colspan="2"
+                              attrs="{'invisible': [('assign_existing_promo_code', '=', False)]}">
+                              The system will attempt to assign one available, unassigned, active and valid code from the associated pool to each selected member.
+                        </span>
+                    </group>
+                    <group attrs="{'invisible': [('promotion_pool_id', '!=', False)]}">
+                        <span class="text-muted" colspan="2">This campaign does not have an associated Promotion Pool, so promo codes cannot be assigned automatically.</span>
+                    </group>
+                    <footer>
+                        <button name="action_assign_campaign" string="Assign Campaign" type="object" class="btn-primary oe_highlight"/>
+                        <button string="Cancel" class="btn-secondary" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+        <record id="action_open_assign_campaign_wizard" model="ir.actions.act_window">
+            <field name="name">Assign Campaign to Members</field>
+            <field name="res_model">restaurant_crm.assign_campaign_wizard</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+    </data>
+</odoo>

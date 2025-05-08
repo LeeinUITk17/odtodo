@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="action_promotion_code_by_pool_window" model="ir.actions.act_window">
+            <field name="name">Promotion Codes</field>
+            <field name="res_model">restaurant_crm.promotion_code</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('pool_id', '=', active_id)]</field>
+            <field name="context">{'default_pool_id': active_id}</field>
+        </record>
+        <record id="action_marketing_campaign_by_pool_window" model="ir.actions.act_window">
+            <field name="name">Marketing Campaigns</field>
+            <field name="res_model">restaurant_crm.marketing_campaign</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('promotion_pool_id', '=', active_id)]</field>
+            <field name="context">{'default_promotion_pool_id': active_id}</field>
+        </record>
+        <record id="view_promotion_pool_tree" model="ir.ui.view">
+            <field name="name">restaurant_crm.promotion_pool.tree</field>
+            <field name="model">restaurant_crm.promotion_pool</field>
+            <field name="arch" type="xml">
+                <tree string="Promotion Pools">
+                    <field name="name"/>
+                    <field name="discount_type"/>
+                    <field name="discount_value"/>
+                    <field name="currency_id" optional="hide"/>
+                    <field name="min_order_value"/>
+                    <field name="max_discount_value" attrs="{'invisible': [('discount_type', '!=', 'PERCENTAGE')]}"/>
+                    <field name="active" widget="boolean_toggle"/>
+                    <field name="code_count" sum="Total Codes"/>
+                    <field name="campaign_count" sum="Total Campaigns"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_promotion_pool_form" model="ir.ui.view">
+            <field name="name">restaurant_crm.promotion_pool.form</field>
+            <field name="model">restaurant_crm.promotion_pool</field>
+            <field name="arch" type="xml">
+                <form string="Promotion Pool">
+                    <header>
+                        <button name="%(action_open_generate_promo_codes_wizard)d" 
+                                string="Generate Codes"
+                                type="action" 
+                                class="oe_highlight"
+                                help="Open wizard to generate multiple promotion codes from this pool."
+                                attrs="{'invisible': [('id', '=', False)]}"
+                                context="{'default_pool_id': active_id}"/> 
+                    </header>
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <button name="%(action_promotion_code_by_pool_window)d" type="action" class="oe_stat_button" icon="fa-tags">
+                                <field name="code_count" widget="statinfo" string="Codes"/>
+                            </button>
+                            <button name="%(action_marketing_campaign_by_pool_window)d" type="action" class="oe_stat_button" icon="fa-bullhorn">
+                                <field name="campaign_count" widget="statinfo" string="Campaigns"/>
+                            </button>
+                        </div>
+                        <widget name="web_ribbon" title="Archived" bg_color="bg-danger" attrs="{'invisible': [('active', '=', True)]}"/>
+                        <group>
+                            <group string="General Information">
+                                <field name="name"/>
+                                <field name="pool_technical_id" readonly="1"/>
+                                <field name="active" widget="boolean_toggle"/>
+                            </group>
+                            <group string="Discount Details">
+                                <field name="discount_type"/>
+                                <field name="discount_value"/>
+                                <field name="currency_id" options="{'no_create': True}" attrs="{'required': [('discount_type', '=', 'FIXED_AMOUNT')], 'invisible': [('discount_type', '=', 'PERCENTAGE_POINTS')]}"/>
+                                <field name="max_discount_value" attrs="{'invisible': [('discount_type', '!=', 'PERCENTAGE')], 'required': [('discount_type', '=', 'PERCENTAGE')]}"/>
+                            </group>
+                        </group>
+                        <group string="Conditions">
+                            <field name="min_order_value"/>
+                        </group>
+                        <notebook>
+                            <page string="Generated Codes">
+                                <field name="promotion_code_ids" readonly="1" context="{'default_pool_id': active_id}">
+                                    <tree>
+                                        <field name="code"/>
+                                        <field name="status"/>
+                                        <field name="valid_from"/>
+                                        <field name="valid_until"/>
+                                        <field name="delivered_user_id"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="Used In Campaigns">
+                                <field name="marketing_campaign_ids" readonly="1">
+                                    <tree>
+                                        <field name="name"/>
+                                        <field name="status"/>
+                                        <field name="start_date"/>
+                                        <field name="end_date"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids"/>
+                        <field name="activity_ids"/>
+                        <field name="message_ids"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_promotion_pool_search" model="ir.ui.view">
+            <field name="name">restaurant_crm.promotion_pool.search</field>
+            <field name="model">restaurant_crm.promotion_pool</field>
+            <field name="arch" type="xml">
+                <search string="Search Promotion Pools">
+                    <field name="name"/>
+                    <field name="pool_technical_id"/>
+                    <field name="discount_type"/>
+                    <filter string="Active" name="active_pools" domain="[('active','=',True)]"/>
+                    <filter string="Archived" name="inactive_pools" domain="[('active','=',False)]"/>
+                    <group expand="0" string="Group By">
+                        <filter string="Discount Type" name="group_by_discount_type" context="{'group_by':'discount_type'}"/>
+                        <filter string="Active" name="group_by_active" context="{'group_by':'active'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record id="action_promotion_pool_window" model="ir.actions.act_window">
+            <field name="name">Promotion Pools</field>
+            <field name="res_model">restaurant_crm.promotion_pool</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="view_promotion_pool_search"/>
+            <field name="context">{'search_default_active_pools': 1}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Define reusable promotion templates (pools) here.
+                </p>
+            </field>
+        </record>
+
+
+    </data>
+</odoo>

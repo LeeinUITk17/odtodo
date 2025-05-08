@@ -1,0 +1,12 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_customer_user,restaurant_crm.customer all access,model_restaurant_crm_customer,base.group_user,1,1,1,1
+access_logs_user,restaurant_crm.logs all access,model_restaurant_crm_logs,base.group_user,1,1,1,1
+access_membership_tier_user,restaurant_crm.membership_tier all access,model_restaurant_crm_membership_tier,base.group_user,1,1,1,1
+access_membership_user,restaurant_crm.membership all access,model_restaurant_crm_membership,base.group_user,1,1,1,1
+access_point_transaction_user,restaurant_crm.point_transaction all access,model_restaurant_crm_point_transaction,base.group_user,1,1,1,1
+access_marketing_campaign_user,restaurant_crm.marketing_campaign all access,model_restaurant_crm_marketing_campaign,base.group_user,1,1,1,1
+access_campaign_delivery_user,restaurant_crm.campaign_delivery all access,model_restaurant_crm_campaign_delivery,base.group_user,1,1,1,1
+access_promotion_pool_user,restaurant_crm.promotion_pool all access,model_restaurant_crm_promotion_pool,base.group_user,1,1,1,1
+access_promotion_code_user,restaurant_crm.promotion_code all access,model_restaurant_crm_promotion_code,base.group_user,1,1,1,1
+access_generate_codes_wizard_user,restaurant_crm.generate_codes_wizard all access,model_restaurant_crm_generate_codes_wizard,base.group_user,1,1,1,1
+access_assign_campaign_wizard_user,restaurant_crm.assign_campaign_wizard all access,model_restaurant_crm_assign_campaign_wizard,base.group_user,1,1,1,1

@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="action_membership_by_tier_window" model="ir.actions.act_window">
+            <field name="name">Members</field>
+            <field name="res_model">restaurant_crm.membership</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('tier_id', '=', active_id)]</field>
+            <field name="context">{'default_tier_id': active_id}</field>
+        </record>
+        <record id="view_membership_tier_tree" model="ir.ui.view">
+            <field name="name">restaurant_crm.membership_tier.tree</field>
+            <field name="model">restaurant_crm.membership_tier</field>
+            <field name="arch" type="xml">
+                <tree string="Membership Tiers" editable="bottom">
+                    <field name="name"/>
+                    <field name="min_points"/>
+                    <field name="description"/>
+                    <field name="member_count" sum="Total Members"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_membership_tier_form" model="ir.ui.view">
+            <field name="name">restaurant_crm.membership_tier.form</field>
+            <field name="model">restaurant_crm.membership_tier</field>
+            <field name="arch" type="xml">
+                <form string="Membership Tier">
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <button name="%(action_membership_by_tier_window)d"
+                                type="action"
+                                class="oe_stat_button"
+                                icon="fa-users">
+                                <field name="member_count" widget="statinfo" string="Members"/>
+                            </button>
+                        </div>
+                        <group>
+                            <field name="name"/>
+                            <field name="min_points"/>
+                        </group>
+                        <group string="Description">
+                            <field name="description" nolabel="1"/>
+                        </group>
+                        <notebook>
+                            <page string="Members In This Tier">
+                                <field name="membership_ids" readonly="1">
+                                    <tree>
+                                        <field name="customer_name"/>
+                                        <field name="points_balance"/>
+                                        <field name="status"/>
+                                        <field name="joined_at"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_membership_tier_search" model="ir.ui.view">
+            <field name="name">restaurant_crm.membership_tier.search</field>
+            <field name="model">restaurant_crm.membership_tier</field>
+            <field name="arch" type="xml">
+                <search string="Search Membership Tiers">
+                    <field name="name"/>
+                    <field name="min_points"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="action_membership_tier_window" model="ir.actions.act_window">
+            <field name="name">Membership Tiers</field>
+            <field name="res_model">restaurant_crm.membership_tier</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="view_membership_tier_search"/>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Define different membership tiers for your loyalty program.
+                </p>
+            </field>
+        </record>
+
+
+    </data>
+</odoo>

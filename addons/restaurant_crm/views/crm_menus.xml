@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- ====================================================== -->
+        <!--                     Main CRM Root Menu                 -->
+        <!-- ====================================================== -->
+        <menuitem id="menu_restaurant_crm_root"
+                  name="Restaurant CRM"
+                  sequence="10"
+                  web_icon="restaurant_crm,static/description/icon.png"/> <!-- Đảm bảo có icon này -->
+
+        <!-- ====================================================== -->
+        <!--                     Customers Section                  -->
+        <!-- ====================================================== -->
+        <menuitem id="menu_crm_customer"
+                  name="Customers"
+                  parent="menu_restaurant_crm_root"
+                  action="action_crm_customer_window" 
+                  sequence="10"/>
+
+        <!-- ====================================================== -->
+        <!--                  Loyalty Program Section               -->
+        <!-- ====================================================== -->
+        <menuitem id="menu_crm_loyalty_program_main" 
+                  name="Loyalty Program"
+                  parent="menu_restaurant_crm_root"
+                  sequence="20"/>
+
+            <menuitem id="menu_crm_membership"
+                      name="Memberships"
+                      parent="menu_crm_loyalty_program_main"
+                      action="action_membership_window" 
+                      sequence="10"/>
+
+            <menuitem id="menu_crm_point_transaction"
+                      name="Point Transactions"
+                      parent="menu_crm_loyalty_program_main"
+                      action="action_point_transaction_window" 
+                      sequence="20"/>
+            <!-- Membership Tiers được chuyển vào Configuration -->
+
+
+        <!-- ====================================================== -->
+        <!--                 Marketing & Promotions Section         -->
+        <!-- ====================================================== -->
+        <!-- Sẽ thêm menu cho Marketing Campaigns ở đây sau -->
+        
+        <menuitem id="menu_crm_marketing_main"
+                  name="Marketing"
+                  parent="menu_restaurant_crm_root"
+                  sequence="30"/> 
+
+            <menuitem id="menu_crm_marketing_campaigns"
+                      name="Campaigns"
+                      parent="menu_crm_marketing_main"
+                      action="action_marketing_campaign_window"
+                      sequence="10"/>
+       
+
+        <!-- ====================================================== -->
+        <!--                     Activity Logs Section              -->
+        <!-- ====================================================== -->
+        <menuitem id="menu_crm_logs"
+                  name="Activity Logs"
+                  parent="menu_restaurant_crm_root"
+                  action="action_crm_logs_window" 
+                  sequence="100"/>
+
+
+        <!-- ====================================================== -->
+        <!--                     Configuration Section              -->
+        <!-- ====================================================== -->
+        <menuitem id="menu_crm_configuration_root"
+                  name="Configuration"
+                  parent="menu_restaurant_crm_root"
+                  groups="base.group_system" 
+                  sequence="200"/>
+
+            <!-- Configuration > Loyalty Settings -->
+            <menuitem id="menu_crm_config_loyalty_settings"
+                      name="Loyalty Settings"
+                      parent="menu_crm_configuration_root"
+                      sequence="10"/>
+
+                <menuitem id="menu_crm_config_membership_tier" 
+                          name="Membership Tiers"
+                          parent="menu_crm_config_loyalty_settings"
+                          action="action_membership_tier_window" 
+                          sequence="10"/>
+                <!-- Thêm các cấu hình Loyalty khác ở đây nếu có (vd: Cấu hình tỷ lệ tích điểm) -->
+
+
+            <!-- Configuration > Promotion Settings -->
+            <menuitem id="menu_crm_config_promotion_settings"
+                      name="Promotion Settings"
+                      parent="menu_crm_configuration_root"
+                      sequence="20"/>
+
+                <menuitem id="menu_crm_config_promotion_pool"
+                          name="Promotion Pools"
+                          parent="menu_crm_config_promotion_settings"
+                          action="action_promotion_pool_window" 
+                          sequence="10"/>
+
+                <menuitem id="menu_crm_config_promotion_code"
+                          name="Promotion Codes"
+                          parent="menu_crm_config_promotion_settings"
+                          action="action_promotion_code_window" 
+                          sequence="20"/>
+                <!-- Thêm các cấu hình Promotion khác ở đây nếu có -->
+
+            <!-- Configuration > Other Settings (Ví dụ) -->
+            <!--
+            <menuitem id="menu_crm_config_other_settings"
+                      name="Other Settings"
+                      parent="menu_crm_configuration_root"
+                      sequence="100"/>
+                <menuitem id="menu_crm_config_log_types" <!- Ví dụ nếu muốn quản lý Log Types ->
+                          name="Log Types"
+                          parent="menu_crm_config_other_settings"
+                          action="action_log_type_config_window" <!- Action giả định ->
+                          sequence="10"/>
+            -->
+
+    </data>
+</odoo>

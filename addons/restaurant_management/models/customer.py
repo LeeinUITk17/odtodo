@@ -13,10 +13,16 @@ class Customer(models.Model):
     birthday = fields.Date(string='Birthday')
     email = fields.Char(string='Email')
     phone = fields.Char(string='Phone', required=True)
+    log_ids = fields.One2many(
+        'restaurant_management.customer.log',
+        'customer_id',
+        string='Activity Logs',
+        readonly=True
+    )
+    log_count = fields.Integer(compute='_compute_log_count', string="Log Count")
     created_at = fields.Datetime(string='Created At', default=fields.Datetime.now, readonly=True)
     updated_at = fields.Datetime(string='Updated At', default=fields.Datetime.now, readonly=True)
     deleted_at = fields.Datetime(string='Deleted At', readonly=True, index=True)
-
     invoice_ids = fields.One2many('restaurant_management.invoice', 'customer_uuid', string='Invoices')
 
     @api.model
@@ -40,3 +46,20 @@ class Customer(models.Model):
         ('phone_uniq', 'unique (phone)', "A customer with this phone number already exists!"),
         ('email_uniq', 'unique (email)', "A customer with this email already exists!"),
     ]
+
+    @api.depends('log_ids')
+    def _compute_log_count(self):
+        for customer in self:
+            customer.log_count = len(customer.log_ids)
+
+    def action_view_customer_logs(self):
+        self.ensure_one()
+        return {
+            'name': _('Activity Logs for %s') % self.name,
+            'type': 'ir.actions.act_window',
+            'res_model': 'restaurant_management.customer.log',
+            'view_mode': 'tree,form',
+            'target': 'current',
+            'domain': [('customer_id', '=', self.id)],
+            'context': {'default_customer_id': self.id},
+        }

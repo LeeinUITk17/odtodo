@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="action_point_transaction_by_membership_window" model="ir.actions.act_window">
+            <field name="name">Point Transactions</field>
+            <field name="res_model">restaurant_crm.point_transaction</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('membership_id', '=', active_id)]</field>
+            <field name="context">{'default_membership_id': active_id}</field>
+        </record>
+
+        <record id="view_membership_tree" model="ir.ui.view">
+            <field name="name">restaurant_crm.membership.tree</field>
+            <field name="model">restaurant_crm.membership</field>
+            <field name="arch" type="xml">
+                <tree string="Memberships">
+                    <field name="membership_technical_id" string="Membership ID"/>
+                    <field name="customer_name"/>
+                    <field name="customer_phone"/>
+                    <field name="tier_id"/>
+                    <field name="points_balance" sum="Total Points"/>
+                    <field name="status"/>
+                    <field name="joined_at"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_membership_form" model="ir.ui.view">
+            <field name="name">restaurant_crm.membership.form</field>
+            <field name="model">restaurant_crm.membership</field>
+            <field name="arch" type="xml">
+                <form string="Membership">
+                    <header/>
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <button name="%(action_point_transaction_by_membership_window)d"
+                                type="action"
+                                class="oe_stat_button"
+                                icon="fa-star">
+                                <field name="point_transaction_ids" widget="statinfo" string="Transactions"/>
+                            </button>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="customer_id" options="{'no_create': True, 'no_open': False}"/>
+                                <field name="customer_name" invisible="1"/>
+                                <field name="customer_phone" invisible="1"/>
+                                <field name="tier_id" options="{'no_create': True}"/>
+                            </group>
+                            <group>
+                                <field name="membership_technical_id" readonly="1"/>
+                                <field name="points_balance" readonly="1"/>
+                                <field name="status"/>
+                                <field name="joined_at" readonly="1"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Point Transactions">
+                                <field name="point_transaction_ids" readonly="1">
+                                    <tree>
+                                        <field name="create_date" string="Date"/>
+                                        <field name="type"/>
+                                        <field name="amount"/>
+                                        <field name="description"/>
+                                        <field name="source_reference"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="Campaigns and Promotions">
+                                <separator string="Campaign Deliveries"/>
+                                <field name="campaign_delivery_ids" nolabel="1" readonly="1">
+                                    <tree create="false" delete="false">
+                                        <field name="campaign_id" string="Campaign" readonly="1"/>
+                                        <field name="assigned_at" readonly="1"/>
+                                    </tree>
+                                </field>
+                                <separator string="Delivered Promo Codes"/>
+                                <field name="delivered_promo_code_ids" nolabel="1" readonly="1">
+                                    <tree create="false" delete="false">
+                                        <field name="code" readonly="1"/>
+                                        <field name="pool_id" readonly="1"/>
+                                        <field name="status" readonly="1"/>
+                                        <field name="valid_until" readonly="1"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids"/>
+                        <field name="activity_ids"/>
+                        <field name="message_ids"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_membership_search" model="ir.ui.view">
+            <field name="name">restaurant_crm.membership.search</field>
+            <field name="model">restaurant_crm.membership</field>
+            <field name="arch" type="xml">
+                <search string="Search Memberships">
+                    <field name="membership_technical_id" string="Membership ID"/>
+                    <field name="customer_id" string="Customer"/>
+                    <field name="customer_name"/>
+                    <field name="customer_phone"/>
+                    <field name="tier_id"/>
+                    <field name="status"/>
+                    <filter string="Active" name="active_members" domain="[('status','=','ACTIVE')]"/>
+                    <filter string="Inactive" name="inactive_members" domain="[('status','=','INACTIVE')]"/>
+                    <group expand="0" string="Group By">
+                        <filter string="Tier" name="group_by_tier" context="{'group_by':'tier_id'}"/>
+                        <filter string="Status" name="group_by_status" context="{'group_by':'status'}"/>
+                        <filter string="Join Month" name="group_by_join_month" context="{'group_by':'joined_at:month'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record id="action_membership_window" model="ir.actions.act_window">
+            <field name="name">Memberships</field>
+            <field name="res_model">restaurant_crm.membership</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="view_membership_search"/>
+            <field name="context">{'search_default_active_members': 1}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Create and manage customer memberships.
+                </p>
+            </field>
+        </record>
+    </data>
+</odoo>
