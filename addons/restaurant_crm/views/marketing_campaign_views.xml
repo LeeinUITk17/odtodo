@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_marketing_campaign_tree" model="ir.ui.view">
+            <field name="name">restaurant_crm.marketing_campaign.tree</field>
+            <field name="model">restaurant_crm.marketing_campaign</field>
+            <field name="arch" type="xml">
+                <tree string="Marketing Campaigns" decoration-info="status=='ACTIVE'" decoration-success="status=='FINISHED'" decoration-muted="status=='DRAFT' or status=='CANCELLED' or active==False" decoration-warning="status=='SCHEDULED' or status=='PAUSED'">
+                    <field name="name"/>
+                    <field name="status"/>
+                    <field name="start_date" optional="show"/>
+                    <field name="end_date" optional="show"/>
+                    <field name="promotion_pool_id" optional="show"/>
+                    <field name="pool_discount_info" optional="hide"/>
+                    <field name="delivery_method" optional="show"/>
+                    <field name="delivered_member_count" sum="Total Members Reached" optional="show"/>
+                    <field name="active" widget="boolean_toggle" optional="hide"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_marketing_campaign_form" model="ir.ui.view">
+            <field name="name">restaurant_crm.marketing_campaign.form</field>
+            <field name="model">restaurant_crm.marketing_campaign</field>
+            <field name="arch" type="xml">
+                <form string="Marketing Campaign">
+                    <header>
+                        <button name="action_schedule" string="Schedule" type="object" class="oe_highlight" attrs="{'invisible': [('status', '!=', 'DRAFT')]}"/>
+                        <button name="action_launch" string="Launch Now" type="object" class="oe_highlight" attrs="{'invisible': [('status', 'not in', ['DRAFT', 'SCHEDULED', 'PAUSED'])]}"/>
+                        <button name="action_pause" string="Pause" type="object" attrs="{'invisible': [('status', '!=', 'ACTIVE')]}"/>
+                        <button name="action_finish" string="Mark as Finished" type="object" class="oe_highlight" attrs="{'invisible': [('status', 'not in', ['ACTIVE', 'PAUSED'])]}"/>
+                        <button name="action_cancel" string="Cancel" type="object" attrs="{'invisible': [('status', 'in', ['FINISHED', 'CANCELLED'])]}" confirm="Are you sure you want to cancel this campaign?"/>
+                        <button name="action_reset_to_draft" string="Reset to Draft" type="object" attrs="{'invisible': [('status', 'not in', ['SCHEDULED', 'PAUSED', 'CANCELLED'])]}"/>
+                        <field name="status" widget="statusbar" statusbar_visible="DRAFT,SCHEDULED,ACTIVE,FINISHED"/>
+                         <button name="%(action_open_assign_campaign_wizard)d" 
+                                string="Assign Members"
+                                type="action"
+                                help="Assign this campaign to specific members or based on criteria."
+                                context="{'default_campaign_id': active_id}"
+                                attrs="{'invisible': [('id', '=', False)]}"/> 
+                        <field name="status" widget="statusbar" statusbar_visible="DRAFT,SCHEDULED,ACTIVE,FINISHED"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <button name="action_assign_to_members_wizard" type="object" class="oe_stat_button" icon="fa-users" help="Assign this campaign to specific members or segments." attrs="{'invisible': [('id', '=', False)]}">
+                                <field name="delivered_member_count" widget="statinfo" string="Members Reached"/>
+                            </button>
+                        </div>
+                        <widget name="web_ribbon" title="Archived" bg_color="bg-danger" attrs="{'invisible': [('active', '=', True)]}"/>
+                        <div class="oe_title">
+                            <label for="name" class="oe_edit_only"/>
+                            <h1><field name="name" placeholder="e.g. Summer Sale Campaign"/></h1>
+                        </div>
+                        <group>
+                            <group string="Campaign Details">
+                                <field name="campaign_technical_id" readonly="1"/>
+                                <field name="active" widget="boolean_toggle"/>
+                                <field name="start_date"/>
+                                <field name="end_date"/>
+                            </group>
+                            <group string="Execution and Promotion">
+                                <field name="delivery_method"/>
+                                <field name="promotion_pool_id" options="{'no_create_edit': True}"/>
+                                <field name="pool_discount_info" readonly="1" attrs="{'invisible': [('promotion_pool_id', '=', False)]}"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Delivered To Members">
+                                <field name="campaign_delivery_ids" context="{'default_campaign_id': active_id}">
+                                    <tree editable="bottom">
+                                        <field name="membership_id" options="{'no_create': True}"/>
+                                        <field name="customer_name" readonly="1"/>
+                                        <field name="assigned_at" readonly="1"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="Performance (Coming Soon)">
+                                <group>
+                                    <p>Statistics on promo codes redeemed, sales generated, ROI, etc., will be shown here after integration.</p>
+                                </group>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids"/>
+                        <field name="activity_ids"/>
+                        <field name="message_ids"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_marketing_campaign_search" model="ir.ui.view">
+            <field name="name">restaurant_crm.marketing_campaign.search</field>
+            <field name="model">restaurant_crm.marketing_campaign</field>
+            <field name="arch" type="xml">
+                <search string="Search Marketing Campaigns">
+                    <field name="name"/>
+                    <field name="campaign_technical_id"/>
+                    <field name="status"/>
+                    <field name="promotion_pool_id"/>
+                    <field name="delivery_method"/>
+                    <filter string="Active Campaigns" name="active_campaigns" domain="[('active','=',True), ('status','=','ACTIVE')]"/>
+                    <filter string="Scheduled" name="scheduled_campaigns" domain="[('active','=',True),('status','=','SCHEDULED')]"/>
+                    <filter string="Draft" name="draft_campaigns" domain="[('status','=','DRAFT')]"/>
+                    <filter string="Finished" name="finished_campaigns" domain="[('status','=','FINISHED')]"/>
+                    <filter string="Archived" name="archived_campaigns" domain="[('active','=',False)]"/>
+                    <group expand="0" string="Group By">
+                        <filter string="Status" name="group_by_status" context="{'group_by':'status'}"/>
+                        <filter string="Delivery Method" name="group_by_delivery_method" context="{'group_by':'delivery_method'}"/>
+                        <filter string="Promotion Pool" name="group_by_promotion_pool" context="{'group_by':'promotion_pool_id'}"/>
+                        <filter string="Start Month" name="group_by_start_month" context="{'group_by':'start_date:month'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record id="action_marketing_campaign_window" model="ir.actions.act_window">
+            <field name="name">Marketing Campaigns</field>
+            <field name="res_model">restaurant_crm.marketing_campaign</field>
+            <field name="view_mode">tree,form,kanban</field>
+            <field name="search_view_id" ref="view_marketing_campaign_search"/>
+            <field name="context">{'search_default_active_campaigns': 1}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Plan and launch your marketing campaigns here!
+                </p>
+            </field>
+        </record>
+    </data>
+</odoo>
